@@ -199,6 +199,74 @@
           ".validate": "newData.val() === true"
         }
       }
+    },
+    "furo4": {
+      "scores": {
+        ".read": true,
+        ".indexOn": [
+          "s"
+        ],
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid && newData.exists() && root.child('furo4/replays/' + $uid).exists() && (!data.exists() || (newData.child('s').val() > data.child('s').val() && now - data.child('t').val() > 20000))",
+          ".validate": "newData.hasChildren(['n', 's', 'c', 'f', 't', 'seed', 'v'])",
+          "n": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
+          },
+          "x": {
+            ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9_]{0,15}$/)"
+          },
+          "s": {
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 500000 && newData.val() <= newData.parent().child('f').val() * 2.5"
+          },
+          "c": {
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 5000"
+          },
+          "f": {
+            ".validate": "newData.isNumber() && newData.val() >= 60 && newData.val() <= 216000"
+          },
+          "t": {
+            ".validate": "newData.val() === now"
+          },
+          "seed": {
+            ".validate": "newData.isNumber()"
+          },
+          "v": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": false
+          },
+          "ti": {
+            ".validate": "newData.isString() && newData.val().matches(/^(r[0-9]|[0-9]{1,2}-[0-9]{1,2}-[0-9]{1,2})$/)"
+          }
+        }
+      },
+      "replays": {
+        "$uid": {
+          ".read": true,
+          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!root.child('furo4/scores/' + $uid).exists() || now - root.child('furo4/scores/' + $uid + '/t').val() > 20000)",
+          ".validate": "newData.hasChildren(['seed', 'r', 'v'])",
+          "seed": {
+            ".validate": "newData.isNumber()"
+          },
+          "r": {
+            ".validate": "newData.isString() && newData.val().length <= 200000"
+          },
+          "v": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "hidden": {
+        ".read": true,
+        "$uid": {
+          ".write": "auth != null && auth.uid === root.child('furo_admin/uid').val()",
+          ".validate": "newData.val() === true"
+        }
+      }
     }
   }
 }

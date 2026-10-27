@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>風呂屋の女 管理画面</title>
+<title>穴の神隠し 管理画面</title>
 <meta name="robots" content="noindex">
 <style>
 body{margin:0;background:#2a1210;color:#fff3d6;font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",Meiryo,sans-serif}
@@ -24,7 +24,7 @@ small{color:#d9bfa0}
 <script src="config.js"></script>
 </head>
 <body><main>
-<h1>風呂屋の女 管理画面</h1>
+<h1>穴の神隠し 管理画面</h1>
 <div class="box">
   <div>この画面の管理用ID：</div><p><code id="uid">読みこみ中…</code></p>
   <div style="font-size:13px;line-height:1.7">はじめての時だけ：Firebase の Realtime Database で、いちばん上に <b>furo_admin</b> を作り、その下に <b>uid</b> を作って、値に上のIDを入れてください。<br>（このブラウザのデータを消すとIDが変わります。そのときは入れなおしてください）</div>
@@ -54,11 +54,11 @@ async function load(){const msg=document.getElementById('msg');msg.textContent='
   try{
     if(!FB.apiKey||!FB.databaseURL)throw new Error('config.js に apiKey と databaseURL が入っていません');
     const a=await auth();document.getElementById('uid').textContent=a.uid;
-    const [sc,hd]=await Promise.all([fetch(DBU+'/furo3/scores.json?orderBy=%22s%22&limitToLast=100').then(r=>r.json()),fetch(DBU+'/furo3/hidden.json').then(r=>r.json())]);
+    const [sc,hd]=await Promise.all([fetch(DBU+'/furo4/scores.json?orderBy=%22s%22&limitToLast=100').then(r=>r.json()),fetch(DBU+'/furo4/hidden.json').then(r=>r.json())]);
     LIST=Object.entries(sc||{}).map(([u,v])=>Object.assign({u},v)).sort((x,y)=>y.s-x.s||x.t-y.t);
     document.getElementById('tbl').innerHTML=LIST.map((r,i)=>{const h=hd&&hd[r.u];return `<tr id="r_${esc(r.u)}" class="${h?'hid':''}"><td>${i+1}</td><td>${esc(r.n)}${r.x?`<br><a href="https://x.com/${esc(r.x)}" target="_blank" rel="noopener">@${esc(r.x)}</a>`:''}<br><small>${new Date(r.t).toLocaleString('ja-JP')}</small></td><td><b>${(+r.s).toLocaleString()}</b>cm<br><small>${r.c}個・${Math.round((r.f||0)/60)}秒</small></td><td class="ck"><button class="chk" data-c="${esc(r.u)}">検算</button></td><td><a href="./?replay=${encodeURIComponent(r.u)}" target="_blank">再生</a></td><td>${h?`<button class="show" data-u="${esc(r.u)}" data-h="0">戻す</button>`:`<button class="hide" data-u="${esc(r.u)}" data-h="1">隠す</button>`}</td></tr>`}).join('')||'<tr><td>まだ記録がありません</td></tr>';
     document.querySelectorAll('[data-u]').forEach(b=>b.onclick=async()=>{try{const a=await auth();const u=b.dataset.u;
-      const r=await fetch(DBU+'/furo3/hidden/'+u+'.json?auth='+encodeURIComponent(a.token),{method:b.dataset.h==='1'?'PUT':'DELETE',body:b.dataset.h==='1'?'true':undefined});
+      const r=await fetch(DBU+'/furo4/hidden/'+u+'.json?auth='+encodeURIComponent(a.token),{method:b.dataset.h==='1'?'PUT':'DELETE',body:b.dataset.h==='1'?'true':undefined});
       if(!r.ok)throw new Error('変更できませんでした（furo_admin/uid にこの画面のIDが入っているか確認）');load()}catch(e){msg.textContent=e.message}});
     document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>check(b.dataset.c));
   }catch(e){msg.textContent=e.message}}
@@ -66,13 +66,13 @@ async function check(u){
   const row=document.getElementById('r_'+u);if(!row)return;const cell=row.querySelector('.ck');cell.textContent='検算中…';
   try{
     const rec=LIST.find(x=>x.u===u);
-    const rp=await fetch(DBU+'/furo3/replays/'+u+'.json').then(r=>r.json());
+    const rp=await fetch(DBU+'/furo4/replays/'+u+'.json').then(r=>r.json());
     if(!rp||!rp.r)throw new Error('操作の記録がない');
     const w=document.getElementById('sim').contentWindow;
     if(!w||!w.verifyReplay)throw new Error('検算の準備ができていない。少し待ってもう一度');
     const res=w.verifyReplay(rp.seed,rp.r);
-    const ok=res.score===rec.s&&res.n===rec.c&&rp.seed===rec.seed;
-    cell.innerHTML=ok?'<b style="color:#8fe08f">OK</b>':`<b style="color:#ff8a80">ちがう</b><br><small>再計算 ${res.score}cm・${res.n}個</small>`;
+    const ok=res.score===rec.s&&res.n===rec.c&&rp.seed===rec.seed&&(!rec.ti||res.ti===rec.ti);
+    cell.innerHTML=ok?'<b style="color:#8fe08f">OK</b>':`<b style="color:#ff8a80">ちがう</b><br><small>再計算 ${res.score}cm・${res.n}個・称号${res.ti}</small>`;
     row.classList.toggle('bad',!ok);
   }catch(e){cell.innerHTML=`<small>${esc(e.message)}</small>`}
 }
