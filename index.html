@@ -218,10 +218,10 @@ const FPS=60;
 const P_UP=0.46/FPS, P_DOWN=0.6/FPS, P_MAX=1.15;
 const SHAPE_KEYS=['box','ball','cone'];
 const SHAPE_CAT={box:'h',ball:'m',cone:'f'};
-function makeItem(g){
-  const r=g.rng,n=g.n;
+function makeItem(g,n,prev){
+  const r=g.rng;
   // 形（同じ形が続きすぎないように）
-  const w=SHAPE_KEYS.map(k=>g.item&&g.item.id===k?0.55:1);const tw=w[0]+w[1]+w[2];
+  const w=SHAPE_KEYS.map(k=>prev&&prev.id===k?0.55:1);const tw=w[0]+w[1]+w[2];
   let v=r()*tw,id='box';for(let i=0;i<3;i++){v-=w[i];if(v<=0){id=SHAPE_KEYS[i];break}}
   const cat=SHAPE_CAT[id];
   // 大きさ（進むほど大きいのが出る。まれに特大）
@@ -249,7 +249,7 @@ function makeItem(g){
 function newGame(seed){
   const g={seed,rng:mulberry32(seed),f:0,hold:false,P:0,score:0,n:0,stress:0,slip:0,
     phase:'pull',grace:Math.round(2.2*FPS),popF:0,dead:null,item:null,big:null,rec:[],replay:null,ev:[],cnt:{box:0,ball:0,cone:0},hist:[]};
-  g.item=makeItem(g);return g;
+  g.item=makeItem(g,0,null);g.next=makeItem(g,1,g.item);return g;
 }
 function setHold(g,h){if(g.dead||g.replay)return;if(g.hold===h)return;g.hold=h;g.rec.push([g.f,h?1:0])}
 function simStep(g){
@@ -259,7 +259,7 @@ function simStep(g){
   g.P=clamp(g.P+(g.hold?P_UP:-P_DOWN),0,P_MAX);
   if(g.phase==='pop'){
     g.popF--;g.stress=Math.max(0,g.stress-1.6/FPS);g.slip=Math.max(0,g.slip-1.6/FPS);
-    if(g.popF<=0){g.item=makeItem(g);g.phase='pull';g.grace=Math.round(1.4*FPS);g.ev.push({k:'next'})}
+    if(g.popF<=0){g.item=g.next;g.next=makeItem(g,g.n+1,g.item);g.phase='pull';g.grace=Math.round(1.4*FPS);g.ev.push({k:'next'})}
     return;
   }
   const it=g.item;
@@ -485,6 +485,7 @@ function buildButt(){
   const shG=new THREE.CylinderGeometry(1,1,1,28,8,true);shG.translate(0,0.5,0);
   // さやの表面をぼこぼこに
   {const p=shG.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const a=Math.atan2(z,x);const k=1+0.12*Math.sin(a*5+y*9)+(1-y)*0.25;p.setXYZ(i,x*k,y,z*k)}shG.computeVertexNormals();colorize(shG,9)}
+  W3.link=new THREE.Mesh(shG,new THREE.MeshPhysicalMaterial({vertexColors:true,roughness:0.3,clearcoat:1,clearcoatRoughness:0.1,side:THREE.DoubleSide,clippingPlanes:[W3.clip]}));W3.link.visible=false;SCN.add(W3.link);
   W3.sheath=new THREE.Mesh(shG,new THREE.MeshPhysicalMaterial({vertexColors:true,roughness:0.3,clearcoat:1,clearcoatRoughness:0.1,side:THREE.DoubleSide,clippingPlanes:[W3.clip]}));SCN.add(W3.sheath);
 }
 
@@ -506,6 +507,13 @@ function makeShape(id,size,clipped,gold){
 }
 function setDirty(m,k){m.material.color.set(m.userData.gold?0xffc93c:SHAPE_COLOR[m.userData.id]).lerp(POO,m.userData.gold?k*0.5:k)}
 
+// 出てくる向きにそろえる（k：穴でしぼられる太さの割合）
+function orientShape(m,dir,k,t){
+  const id=m.userData.id,along=1/Math.pow(k,0.4);
+  if(id==='box'){m.quaternion.setFromUnitVectors(V3(1,0,0),dir.clone().negate());m.scale.set(along,k,k)}
+  else{m.quaternion.setFromUnitVectors(_up,dir);m.scale.set(k,along,k);if(id==='ball')m.rotateY(t*0.6)}
+  if(m.userData.wobbly){const w=Math.sin(t*7)*0.22,w2=Math.sin(t*5.3+1)*0.22;m.scale.x*=1+w;m.scale.y*=1-w*0.6+w2*0.3;m.scale.z*=1+w2}
+}
 // ---------- デッサン人形 ----------
 const MANNE={};
 function buildMannequin(){
@@ -612,6 +620,7 @@ function resetFX(){
   Object.assign(FX,{streak:0,itemDanger:0,blush:0,wave:0,bigWob:false,vibT:0,fpsN:0,fpsT:0,floats:[],shake:0,flash:0,pileN:0,flying:[],wob:0,deathT:0,hint:1,sq:1,back:0,lastProg:null,sfxT:0.6,clench:0,lurch:0,cur:null,curKey:null});
   if(W3.pile){for(const m of W3.pile)SCN.remove(m)}W3.pile=[];
   if(W3.cur){SCN.remove(W3.cur);W3.cur=null}
+  if(W3.next){SCN.remove(W3.next);W3.next=null}FX.nextKey=null;FX.hr=null;
   if(W3.parts)for(const p of W3.parts){p.life=0;p.m.visible=false}
 }
 resetFX();
@@ -727,7 +736,11 @@ function render3D(dt,t){
   W3.clip.normal.copy(dir);W3.clip.constant=-dir.dot(hole)+0.02;
   // いま出てきている○△■
   const key=it?gg.f+'':null;
-  if(it&&gg.phase==='pull'&&FX.curKey!==it){if(W3.cur)SCN.remove(W3.cur);W3.cur=makeShape(it.id,it.size,true,it.gold);W3.cur.userData.wobbly=it.wobbly;SCN.add(W3.cur);FX.curKey=it;FX.back=0}
+  if(it&&gg.phase==='pull'&&FX.curKey!==it){if(W3.cur)SCN.remove(W3.cur);
+    if(W3.next&&FX.nextKey===it){W3.cur=W3.next;W3.next=null;FX.nextKey=null}
+    else{W3.cur=makeShape(it.id,it.size,true,it.gold);W3.cur.userData.wobbly=it.wobbly;SCN.add(W3.cur)}
+    FX.curKey=it;FX.back=0}
+  if(gg&&gg.next&&FX.nextKey!==gg.next&&(!it||gg.next!==it)){if(W3.next)SCN.remove(W3.next);W3.next=makeShape(gg.next.id,gg.next.size,true,gg.next.gold);W3.next.userData.wobbly=gg.next.wobbly;SCN.add(W3.next);FX.nextKey=gg.next}
   let front=null,r0=0.3;
   if(W3.cur&&gg&&(gg.phase==='pull'||gg.dead)){
     const m=W3.cur,len=m.userData.len,r=m.userData.r;r0=r;
@@ -746,16 +759,31 @@ function render3D(dt,t){
     // 形ごとの中心と向き（△は先っぽから出てくる）
     const center=front.clone().addScaledVector(dir,-len/2);
     m.position.copy(center);
-    if(it.id==='cone'){m.quaternion.setFromUnitVectors(_up,dir)}
-    else if(it.id==='box'){m.quaternion.setFromUnitVectors(V3(1,0,0),dir.clone().negate());m.rotateX(0.35)}
-    else m.rotation.set(t*0.3,0,0);
+    const tail0=out-len;
+    const kCur=tail0<0?clamp(((FX.hr==null?r:FX.hr)*1.12)/r,0.6,1):lerp(FX.kCur||1,1,Math.min(1,dt*12));FX.kCur=kCur;
+    orientShape(m,dir,kCur,t);
     setDirty(m,0.82-p*0.25);
-    if(m.userData.wobbly){const w=Math.sin(t*7)*0.22,w2=Math.sin(t*5.3+1)*0.22;m.scale.set(1+w,1-w*0.6+w2*0.3,1+w2)}
     if(m.userData.gold&&Math.random()<dt*8)spawnSpark(center.clone().add(V3((Math.random()-0.5)*r*2,(Math.random()-0.5)*r*2,0.3)),V3(0,0.4,0),0.25,0.5);
     // 穴とさや
     const sqT=1+(gg.hold&&live?0.12:0)+over*0.35-under*0.12+(moving?Math.sin(t*18)*0.05:0);
     FX.sq=lerp(FX.sq,sqT,Math.min(1,dt*10));
-    const hr=r*1.08*FX.sq;
+    // 穴を通っているのが今のものか、つながった次のものか
+    const nr=W3.next?W3.next.userData.r:r;
+    const tailIn=out-len;                       // 今のもののおしりが穴からどれだけ出たか
+    const grow=tailIn<0?clamp(0.7+out/(len*0.6)*0.3,0.7,1):clamp(0.55+tailIn/0.3*0.45,0.55,1);
+    const passR=(tailIn<0?r:nr)*grow;
+    FX.hr=FX.hr==null?passR:lerp(FX.hr,passR,Math.min(1,dt*4));
+    const hr=FX.hr*1.08*FX.sq;
+    // つながって控えている次のもの
+    if(W3.next){const nm=W3.next,nlen=nm.userData.len,gap=0.03;
+      const nfront=front.clone().addScaledVector(dir,-(len+gap));
+      nm.position.copy(nfront).addScaledVector(dir,-nlen/2);
+      orientShape(nm,dir,clamp((FX.hr*1.12)/nm.userData.r,0.6,1),t);
+      setDirty(nm,0.9);nm.visible=tailIn>-0.12;
+      // つなぎ目のヘドロ
+      const lr=Math.min(r,nm.userData.r)*0.75;W3.link.visible=tailIn>-0.05;
+      W3.link.position.copy(front).addScaledVector(dir,-len-gap-0.12);W3.link.quaternion.setFromUnitVectors(_up,dir);W3.link.scale.set(lr,0.3,lr)}
+    else W3.link.visible=false;
     W3.ring.position.copy(hole);W3.ring.quaternion.setFromUnitVectors(V3(0,0,1),dir);W3.ring.scale.set(hr*(1+over*0.25),hr*(1+over*0.25),hr*0.9);
     W3.hole.position.copy(hole).addScaledVector(dir,-0.04);W3.hole.quaternion.setFromUnitVectors(V3(0,0,1),dir);W3.hole.scale.setScalar(hr*0.95);
     {const a=screenOf(hole),b=screenOf(hole.clone().add(V3(0,hr*1.25,0)));FX.holeScr={x:a.x,y:a.y,r:Math.max(26,Math.hypot(b.x-a.x,b.y-a.y))}}
@@ -768,8 +796,15 @@ function render3D(dt,t){
       FX.sq+=0.12;spawnPart(hole.clone().addScaledVector(dir,0.1),dir.clone().multiplyScalar(0.6).add(V3(0,0.5,0)),0.05+Math.random()*0.04,0x5a3812,1)}}
     if(Math.random()<dt*(2+P*6))spawnPart(hole.clone().addScaledVector(dir,0.05).add(V3((Math.random()-0.5)*r,-r*0.6,0)),V3(dir.x*0.4,-0.3,dir.z*0.4),0.03+Math.random()*0.03,0x4a2c0c,1.2);
   }else{
-    W3.sheath.visible=false;FX.sq=lerp(FX.sq,gg&&gg.phase==='pop'?1.5:0.6,Math.min(1,dt*8));
-    const hr=0.3*FX.sq;W3.ring.position.copy(hole);W3.ring.quaternion.setFromUnitVectors(V3(0,0,1),dir);W3.ring.scale.set(hr,hr,hr*0.9);
+    W3.sheath.visible=false;W3.link&&(W3.link.visible=false);FX.sq=lerp(FX.sq,gg&&gg.phase==='pop'?1.2:0.8,Math.min(1,dt*8));
+    let base=0.3;
+    if(W3.next&&gg){const nm=W3.next,nlen=nm.userData.len;base=nm.userData.r;
+      const k=gg.phase==='pop'?1-clamp(gg.popF/36,0,1):0;   // 前のが抜けたあと、次のがむにゅっと顔を出す
+      const nfront=hole.clone().addScaledVector(dir,0.06*k);nm.position.copy(nfront).addScaledVector(dir,-nlen/2);
+      orientShape(nm,dir,clamp(((FX.hr||base)*1.12)/nm.userData.r,0.6,1),t);nm.visible=true;
+      setDirty(nm,0.9);front=front||nfront;base=nm.userData.r*(0.55+0.15*k)}
+    FX.hr=FX.hr==null?base:lerp(FX.hr,base,Math.min(1,dt*4));
+    const hr=FX.hr*1.08*FX.sq;W3.ring.position.copy(hole);W3.ring.quaternion.setFromUnitVectors(V3(0,0,1),dir);W3.ring.scale.set(hr,hr,hr*0.9);
     W3.hole.position.copy(hole).addScaledVector(dir,-0.04);W3.hole.quaternion.setFromUnitVectors(V3(0,0,1),dir);W3.hole.scale.setScalar(hr*0.95);
   }
   // 危険の記録（連続の判定）と、危ないときの振動
