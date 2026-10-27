@@ -1,0 +1,30 @@
+# 管理画面のIDを Firebase の furo_admin/uid に入れる（手で貼るかわり）
+name: 管理画面のIDを登録
+on:
+  workflow_dispatch:
+    inputs:
+      uid:
+        description: 管理画面に出ている管理用ID
+        required: true
+jobs:
+  set:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 鍵を一時ファイルに書く
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+      - name: IDを登録
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+          UID_IN: ${{ inputs.uid }}
+        run: |
+          if ! printf '%s' "$UID_IN" | grep -Eq '^[A-Za-z0-9]{20,40}$'; then echo "IDの形がちがいます"; exit 1; fi
+          npx -y firebase-tools@latest database:set /furo_admin/uid --data "\"$UID_IN\"" --project furoya-no-onna --force --non-interactive
+      - name: 鍵を消す
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
