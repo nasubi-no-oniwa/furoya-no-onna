@@ -119,7 +119,7 @@ ja:{title:'風呂屋の女',sub:'くさい客のガラクタを、綱で引っ�
  rpLoad:'再生を読みこみ中…',rpFail:'再生できませんでした',rpNow:'再生中：',rpStop:'やめる',rpEnd:'再生おわり',toRank:'ランキングへ',place:'位',
  shareTxt:(n,cm,rk)=>`風呂屋の女で、くさい客からガラクタを${n}個・合計${cm}cm引っぱり出して「${rk}」になった！\n#風呂屋の女`,
  ranks:['見習い','下働き','湯女','釜焚き名人','番台','若女将','女将','大女将','湯屋の主','伝説の湯女'],
- credit:'絵：ChatGPTで作成　音：ゲーム内で自作'},
+ credit:'絵・音：ゲーム内で自作'},
 en:{title:'風呂屋の女',sub:'Pull the junk out of the stinky guest with a rope!',
  how:'<b>Hold</b> to pull the rope. Release to ease off.<br>Pull hard things <b>hard</b>, small things <b>gently</b>.<br>Too hard and the rope <b>snaps</b>. Too weak and it <b>slips</b>.<br>Listen to the boss and keep the big junk coming!',
  start:'Start',loading:'Loading…',rank:'Ranking',best:'Best',none:'none yet',
@@ -134,7 +134,7 @@ en:{title:'風呂屋の女',sub:'Pull the junk out of the stinky guest with a ro
  rpLoad:'Loading replay…',rpFail:'Could not play replay',rpNow:'Replay: ',rpStop:'Stop',rpEnd:'Replay over',toRank:'To ranking',place:'',
  shareTxt:(n,cm,rk)=>`In Furoya no Onna I pulled ${n} pieces of junk (${cm}cm total) out of a stinky guest and became "${rk}"!\n#風呂屋の女`,
  ranks:['Trainee','Helper','Bath Girl','Boiler Master','Front Desk','Young Proprietress','Proprietress','Grand Proprietress','Bathhouse Owner','Legendary Bath Girl'],
- credit:'Art: made with ChatGPT / Sound: made in-game'},
+ credit:'Art & sound: made in-game'},
 zh:{title:'風呂屋の女',sub:'用繩子把臭客人身上卡住的破爛拉出來！',
  how:'<b>長按</b>拉繩，放開就放鬆。<br>硬的東西要<b>用力</b>，細小的東西要<b>輕輕</b>。<br>太用力繩子會<b>斷掉</b>，太輕會<b>滑脫</b>。<br>仔細聽老闆娘的指示，持續拉出大件破爛！',
  start:'開始',loading:'讀取中…',rank:'排行榜',best:'最佳紀錄',none:'尚無',
@@ -149,7 +149,7 @@ zh:{title:'風呂屋の女',sub:'用繩子把臭客人身上卡住的破爛拉�
  rpLoad:'讀取重播中…',rpFail:'無法播放重播',rpNow:'重播中：',rpStop:'停止',rpEnd:'重播結束',toRank:'前往排行榜',place:'名',
  shareTxt:(n,cm,rk)=>`我在「風呂屋の女」從臭客人身上拉出了${n}個破爛，合計${cm}cm，成為「${rk}」！\n#風呂屋の女`,
  ranks:['見習生','雜工','湯女','燒鍋名人','櫃台','少老闆娘','老闆娘','大老闆娘','湯屋之主','傳說湯女'],
- credit:'圖：使用ChatGPT製作　音效：遊戲內自製'},
+ credit:'圖・音效：遊戲內自製'},
 ko:{title:'風呂屋の女',sub:'냄새나는 손님에게 걸린 잡동사니를 밧줄로 끌어내라!',
  how:'<b>길게 눌러</b> 밧줄을 당긴다. 떼면 느슨해진다.<br>단단한 건 <b>세게</b>, 작은 건 <b>살살</b>.<br>너무 세면 밧줄이 <b>끊어지고</b>, 너무 약하면 <b>빠져 버린다</b>.<br>여주인의 목소리를 잘 듣고 큰 잡동사니를 계속 끌어내라!',
  start:'시작',loading:'불러오는 중…',rank:'랭킹',best:'최고 기록',none:'아직 없음',
@@ -164,7 +164,7 @@ ko:{title:'風呂屋の女',sub:'냄새나는 손님에게 걸린 잡동사니�
  rpLoad:'리플레이 불러오는 중…',rpFail:'리플레이를 재생할 수 없습니다',rpNow:'재생 중: ',rpStop:'그만',rpEnd:'재생 끝',toRank:'랭킹으로',place:'위',
  shareTxt:(n,cm,rk)=>`「風呂屋の女」에서 냄새나는 손님에게서 잡동사니 ${n}개, 합계 ${cm}cm를 끌어내 「${rk}」이(가) 됐다!\n#風呂屋の女`,
  ranks:['견습생','허드레꾼','목욕탕 아가씨','불때기 명인','카운터','젊은 여주인','여주인','큰 여주인','목욕탕 주인','전설의 목욕탕 아가씨'],
- credit:'그림: ChatGPT로 제작 / 소리: 게임 내 자작'}
+ credit:'그림・소리: 게임 내 자작'}
 };
 let LANG=lsGet('furo_lang');
 if(!TX[LANG]){const n=(navigator.language||'ja').toLowerCase();LANG=n.startsWith('ja')?'ja':n.startsWith('zh')?'zh':n.startsWith('ko')?'ko':n.startsWith('en')?'en':'ja'}
@@ -333,8 +333,7 @@ function decRec(s){const ev=[];let f=0;if(!s)return ev;for(const t of s.split('.
 // ============================================================
 const IMG={};
 function loadImg(k,src){return new Promise(res=>{const im=new Image();im.onload=()=>{IMG[k]=im;res()};im.onerror=()=>res();im.src=src})}
-const ASSETS=[['bg','assets/bg.jpg'],['guest','assets/guest.webp'],['onna_normal','assets/onna_normal.webp'],['onna_strong','assets/onna_strong.webp'],
- ['onna_gentle','assets/onna_gentle.webp']];
+const ASSETS=[];
 let ready=false;
 const loading=Promise.all(ASSETS.map(([k,s])=>loadImg(k,s))).then(()=>{ready=true});
 
@@ -856,18 +855,17 @@ function drawOnnaAndCall(Ly,dt,t){
   }
   let face=FX.callKind==='strong'||FX.callKind==='stuck'?'strong':FX.callKind==='gentle'||FX.callKind==='slip'||FX.callKind==='snap'?'gentle':'normal';
   if(FX.callHold<=0)face='normal';
-  drawOnna(o.x,o.y,o.h,face,t);
+  // 女将はなし（声の吹き出しだけ）
   // 吹き出し
   FX.callT+=dt;FX.callHold-=dt;
   if(FX.callTxt&&FX.callHold>-0.25){
     const k=FX.callHold<0?1+FX.callHold/0.25:1;
     const pop=FX.callT<0.12?0.5+FX.callT/0.12*0.6:FX.callT<0.22?1.1-(FX.callT-0.12):1;
-    const bx=o.x+o.h*0.76,by=o.y+o.h*0.32;
+    ctx.font=`26px "Dela Gothic One", sans-serif`;const bx=W/2-(Math.min(240,ctx.measureText(FX.callTxt).width)+34)/2,by=VH*0.2;
     const col=FX.callKind==='strong'||FX.callKind==='stuck'?'#e8263a':FX.callKind==='gentle'||FX.callKind==='loose'?'#3f6fb5':FX.callKind==='snap'||FX.callKind==='slip'?'#5a2a8a':'#c98a00';
     ctx.save();ctx.globalAlpha=Math.max(0,k);ctx.translate(bx,by);ctx.scale(pop,pop);
     ctx.font=`26px "Dela Gothic One", sans-serif`;const tw=Math.min(240,ctx.measureText(FX.callTxt).width);const bw=tw+34,bh=50;
     ctx.fillStyle='#fffaf0';ctx.strokeStyle=col;ctx.lineWidth=4;
-    ctx.beginPath();ctx.moveTo(-6,bh*0.15);ctx.lineTo(-22,bh*0.35);ctx.lineTo(6,bh*0.38);ctx.closePath();ctx.fill();ctx.stroke();
     rr(ctx,0,-bh/2,bw,bh,18);ctx.fill();ctx.stroke();
     ctx.fillStyle=col;ctx.textBaseline='middle';ctx.textAlign='left';
     const jit=FX.callKind==='strong'?Math.sin(t*50)*1.2:0;

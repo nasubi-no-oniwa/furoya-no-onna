@@ -12,16 +12,9 @@
 - admin.html：管理画面
 - database.rules.json：Firebase Realtime Database のルール（GitHub に上げると自動で反映）
 - firebase.json / .firebaserc / .github/workflows/firebase-rules.yml：ルールの自動反映の設定
-- assets/：絵（ChatGPT で作成）
-
-## 絵の差しかえ
-assets/ に次の名前で置くと自動で使われます（無いときは仮の絵）。
-- onna_normal.webp / onna_strong.webp / onna_gentle.webp：湯屋の女（ふつう・もっと強く・やさしく）
-- guest.webp：くさい客　bg.jpg：背景
 
 ## 綱を引く人
 わざと3Dのデッサン人形ふうの棒人間（プログラムで描画、顔なし）。力むほどのけぞり、強すぎると腕がゴムのように伸びる。
 
 ## 素材
-- 絵：ChatGPT で作成
-- BGM・効果音：ゲーム内で自作
+- 絵・BGM・効果音：ゲーム内で自作（プログラムで描画）
