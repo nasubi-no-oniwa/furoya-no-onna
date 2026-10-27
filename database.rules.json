@@ -9,7 +9,7 @@
           "s"
         ],
         "$uid": {
-          ".write": "auth != null && auth.uid === $uid && newData.exists() && root.child('furo/replays/' + $uid).exists() && (!data.exists() || (newData.child('s').val() > data.child('s').val() && now - data.child('t').val() > 20000))",
+          ".write": false,
           ".validate": "newData.hasChildren(['n', 's', 'c', 'f', 't', 'seed', 'v'])",
           "n": {
             ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
@@ -43,7 +43,7 @@
       "replays": {
         "$uid": {
           ".read": true,
-          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!root.child('furo/scores/' + $uid).exists() || now - root.child('furo/scores/' + $uid + '/t').val() > 20000)",
+          ".write": false,
           ".validate": "newData.hasChildren(['seed', 'r', 'v'])",
           "seed": {
             ".validate": "newData.isNumber()"
@@ -74,7 +74,7 @@
           "s"
         ],
         "$uid": {
-          ".write": "auth != null && auth.uid === $uid && newData.exists() && root.child('furo2/replays/' + $uid).exists() && (!data.exists() || (newData.child('s').val() > data.child('s').val() && now - data.child('t').val() > 20000))",
+          ".write": false,
           ".validate": "newData.hasChildren(['n', 's', 'c', 'f', 't', 'seed', 'v'])",
           "n": {
             ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
@@ -108,7 +108,7 @@
       "replays": {
         "$uid": {
           ".read": true,
-          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!root.child('furo2/scores/' + $uid).exists() || now - root.child('furo2/scores/' + $uid + '/t').val() > 20000)",
+          ".write": false,
           ".validate": "newData.hasChildren(['seed', 'r', 'v'])",
           "seed": {
             ".validate": "newData.isNumber()"
@@ -139,7 +139,7 @@
           "s"
         ],
         "$uid": {
-          ".write": "auth != null && auth.uid === $uid && newData.exists() && root.child('furo3/replays/' + $uid).exists() && (!data.exists() || (newData.child('s').val() > data.child('s').val() && now - data.child('t').val() > 20000))",
+          ".write": false,
           ".validate": "newData.hasChildren(['n', 's', 'c', 'f', 't', 'seed', 'v'])",
           "n": {
             ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
@@ -176,7 +176,7 @@
       "replays": {
         "$uid": {
           ".read": true,
-          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!root.child('furo3/scores/' + $uid).exists() || now - root.child('furo3/scores/' + $uid + '/t').val() > 20000)",
+          ".write": false,
           ".validate": "newData.hasChildren(['seed', 'r', 'v'])",
           "seed": {
             ".validate": "newData.isNumber()"
