@@ -17,8 +17,10 @@
 ## 絵の差しかえ
 assets/ に次の名前で置くと自動で使われます（無いときは仮の絵）。
 - onna_normal.webp / onna_strong.webp / onna_gentle.webp：湯屋の女（ふつう・もっと強く・やさしく）
-- ko1.webp / ko2.webp / ko3.webp：綱を引く子（余裕・ふんばる・全力）
 - guest.webp：くさい客　bg.jpg：背景
+
+## 綱を引く人
+わざと棒人間（プログラムで描画）。力むほどのけぞり、強すぎると腕がゴムのように伸びる。
 
 ## 素材
 - 絵：ChatGPT で作成
