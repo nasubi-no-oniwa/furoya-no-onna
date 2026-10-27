@@ -74,6 +74,9 @@ td a{color:#9fd4ff;font-size:12px}
 #rpbar{position:absolute;left:0;right:60px;bottom:6px;display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(0,0,0,.55);border-radius:0 14px 14px 0;font-weight:900;font-size:14px;z-index:3}
 #rpbar[hidden]{display:none}
 .mute{position:absolute;right:10px;bottom:10px;z-index:4;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:20px;border:2px solid rgba(255,220,160,.5)}
+.ttl{font-family:"Dela Gothic One",sans-serif;font-size:21px;line-height:1.35;color:#ffe066;margin:4px 0 6px;text-shadow:0 2px 0 #4a0d14;word-break:keep-all;overflow-wrap:anywhere}
+.gwrap{margin:8px 0 4px}.gwrap canvas{position:static;width:100%;height:auto;border-radius:10px;display:block}.gl{margin-top:4px}
+.rt{color:#ffd47a;font-size:11px;line-height:1.4}
 @media (prefers-reduced-motion:reduce){.nb{animation:none}}
 </style>
 </head>
@@ -86,13 +89,14 @@ td a{color:#9fd4ff;font-size:12px}
   <div id="ov"></div>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script src="titles.js"></script>
 <script>
 'use strict';
 // ============================================================
 //  風呂屋の女（3D版）  —  nasubi-no-oniwa
 // ============================================================
-const VER=2;
-const DBP='/furo2';               // 3D版のランキング（リセット後）
+const VER=3;
+const DBP='/furo3';               // ゆるくした版のランキング（2回目のリセット後）
 const FB=window.FURO_FB||{};
 const NET_OK=!!(FB.apiKey&&FB.databaseURL);
 const DBU=()=>String(FB.databaseURL||'').replace(/\/$/,'');
@@ -118,7 +122,7 @@ ja:{title:'風呂屋の女',sub:'ムリムリ出てくる○△■を、綱で�
  needNick:'ニックネームを入れてください',badX:'XのIDは英数字と _ だけです',sending:'登録中…',sent:'登録しました！',sendFail:'登録できませんでした。少し時間をおいてもう一度。',
  rkTitle:'ランキング 上位30',rkWait:'ランキングは準備中です',rkFail:'読みこめませんでした',rkEmpty:'まだ記録がありません',rkNote:'▶ でその人のプレイを見られます',back:'もどる',
  rpLoad:'再生を読みこみ中…',rpFail:'再生できませんでした',rpNow:'再生中：',rpStop:'やめる',rpEnd:'再生おわり',toRank:'ランキングへ',place:'位',
- shareTxt:(n,cm,rk)=>`風呂屋の女で、巨大なお尻から○△■を${n}個・合計${cm}cm引っぱり出して「${rk}」になった！\n#風呂屋の女`,
+ graph:'最後の5秒の力　緑＝ちょうどいい範囲　<span style="color:#ff7a7a">赤＝強すぎ</span>　<span style="color:#8cc4ff">青＝弱すぎ</span>',shareTxt:(n,cm,rk)=>`風呂屋の女で、巨大なお尻から○△■を${n}個・合計${cm}cm引っぱり出して\n称号「${rk}」になった！\n#風呂屋の女`,
  ranks:['見習い','下働き','湯女','釜焚き名人','番台','若女将','女将','大女将','湯屋の主','伝説の湯女'],
  shapes:{box:'四角',ball:'丸',cone:'三角'},nogl:'この端末では3Dが表示できませんでした',
  credit:'絵・音：ゲーム内で自作',muri:['ムリ…','ムリムリ…','ミチミチ…','むにゅ…','ぬちゃ…'],buri:'ぶりっ！',buriBig:'ぶりゅりゅりゅっ！',fuu:'ふぅ…'},
@@ -132,7 +136,7 @@ en:{title:'風呂屋の女',sub:'Pull the ○△■ squeezing out of the giant b
  needNick:'Enter a nickname',badX:'X ID: letters, numbers and _ only',sending:'Submitting…',sent:'Submitted!',sendFail:'Could not submit. Try again later.',
  rkTitle:'Top 30',rkWait:'Ranking is not ready yet',rkFail:'Could not load',rkEmpty:'No records yet',rkNote:'Tap ▶ to watch a replay',back:'Back',
  rpLoad:'Loading replay…',rpFail:'Could not play replay',rpNow:'Replay: ',rpStop:'Stop',rpEnd:'Replay over',toRank:'To ranking',place:'',
- shareTxt:(n,cm,rk)=>`In Furoya no Onna I pulled ${n} ○△■ (${cm}cm total) out of a giant butt and became "${rk}"!\n#風呂屋の女`,
+ graph:'Your pull in the last 5 s. Green = just right, <span style="color:#ff7a7a">red = too hard</span>, <span style="color:#8cc4ff">blue = too weak</span>',shareTxt:(n,cm,rk)=>`In Furoya no Onna I pulled ${n} ○△■ (${cm}cm) out of a giant butt.\nTitle: "${rk}"\n#風呂屋の女`,
  ranks:['Trainee','Helper','Bath Girl','Boiler Master','Front Desk','Young Proprietress','Proprietress','Grand Proprietress','Bathhouse Owner','Legendary Bath Girl'],
  shapes:{box:'Cube',ball:'Ball',cone:'Cone'},nogl:'3D could not be shown on this device',
  credit:'Art & sound: made in-game',muri:['Squeeze…','Squish…','Mmmf…','Nngh…','Splurch…'],buri:'PLOP!',buriBig:'PLOOOORP!',fuu:'Phew…'},
@@ -146,7 +150,7 @@ zh:{title:'風呂屋の女',sub:'用繩子把擠出來的○△■拉出來！',
  needNick:'請輸入暱稱',badX:'X的ID只能用英數字和 _',sending:'登錄中…',sent:'登錄完成！',sendFail:'無法登錄，請稍後再試。',
  rkTitle:'排行榜 前30名',rkWait:'排行榜準備中',rkFail:'讀取失敗',rkEmpty:'還沒有紀錄',rkNote:'按 ▶ 可以觀看重播',back:'返回',
  rpLoad:'讀取重播中…',rpFail:'無法播放重播',rpNow:'重播中：',rpStop:'停止',rpEnd:'重播結束',toRank:'前往排行榜',place:'名',
- shareTxt:(n,cm,rk)=>`我在「風呂屋の女」從巨大屁股拉出了${n}個○△■，合計${cm}cm，成為「${rk}」！\n#風呂屋の女`,
+ graph:'最後5秒的力道　綠＝剛剛好　<span style="color:#ff7a7a">紅＝太用力</span>　<span style="color:#8cc4ff">藍＝太輕</span>',shareTxt:(n,cm,rk)=>`我在「風呂屋の女」從巨大屁股拉出了${n}個○△■，合計${cm}cm\n稱號「${rk}」！\n#風呂屋の女`,
  ranks:['見習生','雜工','湯女','燒鍋名人','櫃台','少老闆娘','老闆娘','大老闆娘','湯屋之主','傳說湯女'],
  shapes:{box:'方塊',ball:'圓球',cone:'三角錐'},nogl:'此裝置無法顯示3D',
  credit:'圖・音效：遊戲內自製',muri:['嗯…','嗯嗯…','擠擠…','咕啾…','噗滋…'],buri:'噗！',buriBig:'噗嚕嚕嚕！',fuu:'呼…'},
@@ -160,7 +164,7 @@ ko:{title:'風呂屋の女',sub:'밀려 나오는 ○△■를 밧줄로 끌어�
  needNick:'닉네임을 입력하세요',badX:'X 아이디는 영문, 숫자, _ 만 가능합니다',sending:'등록 중…',sent:'등록했습니다!',sendFail:'등록하지 못했습니다. 잠시 후 다시 시도하세요.',
  rkTitle:'랭킹 상위 30',rkWait:'랭킹 준비 중입니다',rkFail:'불러오지 못했습니다',rkEmpty:'아직 기록이 없습니다',rkNote:'▶ 를 누르면 플레이를 볼 수 있습니다',back:'돌아가기',
  rpLoad:'리플레이 불러오는 중…',rpFail:'리플레이를 재생할 수 없습니다',rpNow:'재생 중: ',rpStop:'그만',rpEnd:'재생 끝',toRank:'랭킹으로',place:'위',
- shareTxt:(n,cm,rk)=>`「風呂屋の女」에서 거대한 엉덩이에서 ○△■ ${n}개, 합계 ${cm}cm를 끌어내 「${rk}」이(가) 됐다!\n#風呂屋の女`,
+ graph:'마지막 5초의 힘　초록＝딱 좋음　<span style="color:#ff7a7a">빨강＝너무 셈</span>　<span style="color:#8cc4ff">파랑＝너무 약함</span>',shareTxt:(n,cm,rk)=>`「風呂屋の女」에서 거대한 엉덩이에서 ○△■ ${n}개, 합계 ${cm}cm를 끌어냈다\n칭호 「${rk}」!\n#風呂屋の女`,
  ranks:['견습생','허드레꾼','목욕탕 아가씨','불때기 명인','카운터','젊은 여주인','여주인','큰 여주인','목욕탕 주인','전설의 목욕탕 아가씨'],
  shapes:{box:'네모',ball:'동그라미',cone:'세모'},nogl:'이 기기에서는 3D를 표시할 수 없습니다',
  credit:'그림・소리: 게임 내 자작',muri:['끄응…','끙끙…','미끌…','물컹…','질척…'],buri:'뿡!',buriBig:'뿌르르르륵!',fuu:'후우…'}
@@ -171,13 +175,43 @@ const T=()=>TX[LANG];
 const RANK_AT=[0,200,500,900,1400,2000,2800,3800,5000,7000];
 function rankOf(cm){let i=0;for(let k=0;k<RANK_AT.length;k++)if(cm>=RANK_AT[k])i=k;return T().ranks[i]}
 const SHAPE_MARK={box:'■',ball:'●',cone:'▲'};
+// ---------- 称号（約1万通り） ----------
+const BODY_AT=[0,50,100,200,300,450,600,800,1000,1300,1600,2000,2500,3000,3700,4500,5500,7000,9000,12000];
+const AVG_AT=[40,55,70,85,100,120,145,175,220];
+function bodyIx(cm){let i=0;for(let k=0;k<BODY_AT.length;k++)if(cm>=BODY_AT[k])i=k;return i}
+function titleCode(G){
+  const n=G.n,c=G.cnt||{box:0,ball:0,cone:0};
+  if(n===0)return 'r0';
+  if(G.big&&G.big.size>=800)return 'r6';
+  if(n>=5){if(c.box===n)return 'r2';if(c.ball===n)return 'r3';if(c.cone===n)return 'r4';if(c.box===c.ball&&c.ball===c.cone)return 'r5'}
+  if(G.score>=1000&&G.score%1000===0)return 'r1';
+  let dom='box',mx=-1;for(const k of ['box','ball','cone'])if(c[k]>mx){mx=c[k];dom=k}
+  const share=mx/n;let pi;
+  if(share<0.45||n<2)pi=18+((G.score+n)%7);
+  else pi={box:0,ball:6,cone:12}[dom]+clamp(Math.floor((share-0.45)/0.55*6),0,5);
+  let ab=0;const avg=G.score/n;for(let k=0;k<AVG_AT.length;k++)if(avg>=AVG_AT[k])ab=k+1;
+  const mi=(G.dead==='slip'?10:0)+ab;
+  return pi+'-'+mi+'-'+bodyIx(G.score);
+}
+function TT(){const d=window.FURO_TITLES||{};return LANG==='ja'?d.ja:(d.en||d.ja)}
+function titleText(code){
+  const L=TT();if(!L||!code)return '';
+  if(/^r\d$/.test(code))return '★'+(L.rare[code]||'');
+  const m=/^(\d+)-(\d+)-(\d+)$/.exec(code);if(!m)return '';
+  const pi=+m[1],mi=+m[2],bi=+m[3];
+  const pre=pi<6?L.pre.box[pi]:pi<12?L.pre.ball[pi-6]:pi<18?L.pre.cone[pi-12]:L.pre.mix[pi-18];
+  const mid=mi<10?L.mid.snap[mi]:L.mid.slip[mi-10];
+  const body=L.body[bi];
+  return [pre,mid,body].filter(Boolean).join(' ');
+}
+function bodyOf(cm){const L=TT();return L?L.body[bodyIx(cm)]:rankOf(cm)}
 const iname=id=>SHAPE_MARK[id]+' '+T().shapes[id];
 
 // ============================================================
 //  シミュレーション（1秒60回・シード固定 → 再生と検算が同じになる）
 // ============================================================
 const FPS=60;
-const P_UP=0.62/FPS, P_DOWN=0.82/FPS, P_MAX=1.15;
+const P_UP=0.46/FPS, P_DOWN=0.6/FPS, P_MAX=1.15;
 const SHAPE_KEYS=['box','ball','cone'];
 const SHAPE_CAT={box:'h',ball:'m',cone:'f'};
 function makeItem(g){
@@ -191,9 +225,9 @@ function makeItem(g){
   let size=Math.round(25+Math.pow(r1,1.6)*(55+Math.min(220,n*11)));
   if(n>=12&&r2<0.05)size=Math.round(400+r3*500);
   const base=cat==='h'?0.74+r()*0.17:cat==='m'?0.48+r()*0.15:0.22+r()*0.13;
-  let W=Math.max(0.04,0.155-n*0.0045);if(cat==='f')W*=0.88;
+  let W=Math.max(0.05,0.23-n*0.006);if(cat==='f')W*=0.9;
   const need=Math.min(6.2,0.95+size/95)*FPS;
-  const it={id,cat,size,T:base,T0:base,W,need,prog:0,snag:null,dm:0.7+Math.min(0.55,n*0.025),
+  const it={id,cat,size,T:base,T0:base,W,need,prog:0,snag:null,dm:0.42+Math.min(0.5,n*0.02),
     drift:n>=12?Math.min(0.13,(n-12)*0.0065):0,dper:Math.round((2+r()*1.4)*FPS),dph:Math.floor(r()*240)};
   if(n>=4&&r()<Math.min(0.55,0.12+n*0.022)){
     const at=need*(0.3+r()*0.4);
@@ -205,7 +239,7 @@ function makeItem(g){
 }
 function newGame(seed){
   const g={seed,rng:mulberry32(seed),f:0,hold:false,P:0,score:0,n:0,stress:0,slip:0,
-    phase:'pull',grace:Math.round(1.7*FPS),popF:0,dead:null,item:null,big:null,rec:[],replay:null,ev:[]};
+    phase:'pull',grace:Math.round(2.2*FPS),popF:0,dead:null,item:null,big:null,rec:[],replay:null,ev:[],cnt:{box:0,ball:0,cone:0},hist:[]};
   g.item=makeItem(g);return g;
 }
 function setHold(g,h){if(g.dead||g.replay)return;if(g.hold===h)return;g.hold=h;g.rec.push([g.f,h?1:0])}
@@ -216,13 +250,14 @@ function simStep(g){
   g.P=clamp(g.P+(g.hold?P_UP:-P_DOWN),0,P_MAX);
   if(g.phase==='pop'){
     g.popF--;g.stress=Math.max(0,g.stress-1.6/FPS);g.slip=Math.max(0,g.slip-1.6/FPS);
-    if(g.popF<=0){g.item=makeItem(g);g.phase='pull';g.grace=Math.round(0.95*FPS);g.ev.push({k:'next'})}
+    if(g.popF<=0){g.item=makeItem(g);g.phase='pull';g.grace=Math.round(1.4*FPS);g.ev.push({k:'next'})}
     return;
   }
   const it=g.item;
-  if(it.snag&&!it.snag.done&&it.prog>=it.snag.at){it.snag.done=true;it.T0=it.snag.T2;g.grace=Math.max(g.grace,Math.round(0.5*FPS));g.ev.push({k:it.snag.kind})}
+  if(it.snag&&!it.snag.done&&it.prog>=it.snag.at){it.snag.done=true;it.T0=it.snag.T2;g.grace=Math.max(g.grace,Math.round(0.8*FPS));g.ev.push({k:it.snag.kind})}
   if(it.drift>0){const ph=((g.f+it.dph)%it.dper)/it.dper;const tri=ph<0.5?ph*4-1:3-ph*4;it.T=clamp(it.T0+it.drift*tri,0.15,1.05)}else it.T=it.T0;
   const lo=it.T-it.W,hi=it.T+it.W,P=g.P;
+  g.hist.push(P,lo,hi);if(g.hist.length>900)g.hist.splice(0,g.hist.length-900);
   if(P>=lo&&P<=hi){
     it.prog+=1-0.45*Math.abs(P-it.T)/it.W;
     g.stress=Math.max(0,g.stress-1.5/FPS);g.slip=Math.max(0,g.slip-1.5/FPS);
@@ -237,7 +272,7 @@ function simStep(g){
   if(g.stress>=1){g.dead='snap';g.endF=g.f;g.ev.push({k:'snap'});return}
   if(g.slip>=1){g.dead='slip';g.endF=g.f;g.ev.push({k:'slip'});return}
   if(it.prog>=it.need){
-    g.score+=it.size;g.n++;
+    g.score+=it.size;g.n++;g.cnt[it.id]++;
     if(!g.big||it.size>g.big.size)g.big={id:it.id,size:it.size};
     g.phase='pop';g.popF=Math.round(0.6*FPS);g.ev.push({k:'pop',it});
   }
@@ -587,7 +622,27 @@ function drawHUD(){
   ctx.strokeStyle='#5a2e14';ctx.lineWidth=3;ctx.stroke();
   ctx.fillStyle='#2a120a';ctx.textAlign='right';ctx.font='34px "Dela Gothic One", sans-serif';ctx.fillText(txt,x-38,y+44);
   ctx.font='900 15px "Zen Maru Gothic", sans-serif';ctx.fillText('cm',x-12,y+44);
-  ctx.font='900 13px "Zen Maru Gothic", sans-serif';ctx.fillStyle='#5a2e14';ctx.fillText(`${g.n}${T().items}　${rankOf(g.score)}`,x-12,y+62);
+  ctx.font='900 13px "Zen Maru Gothic", sans-serif';ctx.fillStyle='#5a2e14';ctx.fillText(`${g.n}${T().items}　${bodyOf(g.score)}`,x-12,y+62);
+  ctx.restore();
+}
+function drawDangerRing(t){
+  const it=g.item,h=FX.holeScr,rel=(g.P-it.T)/it.W;
+  const lvl=Math.max(g.stress,g.slip),up=g.stress>=g.slip?(lvl>0.01?true:rel>0):false;
+  const sideOver=lvl>0.01?g.stress>g.slip:rel>0;
+  const warn=clamp((Math.abs(rel)-0.55)/0.45,0,1);
+  const col=sideOver?[255,70,60]:[70,150,255];
+  const R2=h.r+10;
+  ctx.save();ctx.lineCap='round';
+  // うすい下地の輪
+  ctx.strokeStyle='rgba(255,245,225,.22)';ctx.lineWidth=7;ctx.beginPath();ctx.arc(h.x,h.y,R2,0,Math.PI*2);ctx.stroke();
+  // 外れかけ：輪全体がうっすら色づく
+  if(warn>0){ctx.strokeStyle=`rgba(${col},${0.25+warn*0.35})`;ctx.lineWidth=7;ctx.beginPath();ctx.arc(h.x,h.y,R2,0,Math.PI*2);ctx.stroke()}
+  // たまった危険（満タンで失敗）
+  if(lvl>0.01){const pul=0.75+Math.sin(t*(10+lvl*20))*0.25;
+    ctx.shadowColor=`rgba(${col},1)`;ctx.shadowBlur=14*pul;
+    ctx.strokeStyle=`rgba(${col},${0.85*pul+0.15})`;ctx.lineWidth=9;ctx.beginPath();ctx.arc(h.x,h.y,R2,-Math.PI/2,-Math.PI/2+Math.PI*2*clamp(lvl,0,1));ctx.stroke()}
+  // ちょうどいい：うっすら光る
+  if(Math.abs(rel)<=1&&lvl<0.01&&warn===0&&g.grace<=0){ctx.strokeStyle=`rgba(255,236,150,${0.25+Math.sin(t*6)*0.12})`;ctx.lineWidth=4;ctx.beginPath();ctx.arc(h.x,h.y,R2,0,Math.PI*2);ctx.stroke()}
   ctx.restore();
 }
 function drawOverlay(dt,t){
@@ -604,6 +659,7 @@ function drawOverlay(dt,t){
   if(mode==='play'&&g&&!g.replay&&FX.hint>0){FX.hint=g.f>200?Math.max(0,FX.hint-dt):1;
     ctx.save();ctx.globalAlpha=FX.hint*(0.7+Math.sin(t*5)*0.3);ctx.textAlign='center';ctx.font='900 20px "Zen Maru Gothic", sans-serif';ctx.lineWidth=6;ctx.strokeStyle='rgba(40,10,10,.85)';ctx.lineJoin='round';
     ctx.strokeText('👆 '+T().hold,Wv*0.62,VH*0.97-12);ctx.fillStyle='#fff3d6';ctx.fillText('👆 '+T().hold,Wv*0.62,VH*0.97-12);ctx.restore()}
+  if(g&&mode==='play'&&g.phase==='pull'&&!g.dead&&FX.holeScr)drawDangerRing(t);
   if(FX.flash>0){ctx.fillStyle=`rgba(255,248,225,${FX.flash})`;ctx.fillRect(0,0,Wv,VH);FX.flash=Math.max(0,FX.flash-dt*2.5)}
   const danger=g&&!g.dead&&mode==='play'?Math.max(g.stress,g.slip):0;
   if(danger>0.25){const a=(danger-0.25)*0.55*(0.7+Math.sin(t*18)*0.3);const v=ctx.createRadialGradient(Wv/2,VH/2,VH*0.3,Wv/2,VH/2,VH*0.75);v.addColorStop(0,'rgba(200,20,30,0)');v.addColorStop(1,`rgba(200,20,30,${a})`);ctx.fillStyle=v;ctx.fillRect(0,0,Wv,VH)}
@@ -675,6 +731,7 @@ function render3D(dt,t){
     const hr=r*1.08*FX.sq;
     W3.ring.position.copy(hole);W3.ring.quaternion.setFromUnitVectors(V3(0,0,1),dir);W3.ring.scale.set(hr*(1+over*0.25),hr*(1+over*0.25),hr*0.9);
     W3.hole.position.copy(hole).addScaledVector(dir,-0.04);W3.hole.quaternion.setFromUnitVectors(V3(0,0,1),dir);W3.hole.scale.setScalar(hr*0.95);
+    {const a=screenOf(hole),b=screenOf(hole.clone().add(V3(0,hr*1.25,0)));FX.holeScr={x:a.x,y:a.y,r:Math.max(26,Math.hypot(b.x-a.x,b.y-a.y))}}
     const shL=Math.max(0.02,Math.min(out-0.02,0.25+r*0.5));
     W3.sheath.visible=out>0.05&&!gg.dead;
     W3.sheath.position.copy(hole).addScaledVector(dir,-0.05);W3.sheath.quaternion.setFromUnitVectors(_up,dir);W3.sheath.scale.set(hr*0.98,shL,hr*0.98);
@@ -793,12 +850,12 @@ async function loadRanking(force){
   const [sc,hd]=await Promise.all([fbGet(DBP+'/scores','?orderBy=%22s%22&limitToLast=60'),fbGet(DBP+'/hidden')]);
   RANK=Object.entries(sc||{}).filter(([u])=>!(hd&&hd[u])).map(([u,v])=>Object.assign({u},v)).sort((a,b)=>b.s-a.s||a.t-b.t).slice(0,30);RANK_TIME=Date.now();return RANK;
 }
-function canEnter(s){if(!NET_OK||s<=0||g.replay)return false;const sent=lsGet('furo2_sent');if(sent!=null&&s<=sent)return false;if(!RANK)return true;return RANK.length<30||s>RANK[RANK.length-1].s}
+function canEnter(s){if(!NET_OK||s<=0||g.replay)return false;const sent=lsGet('furo3_sent');if(sent!=null&&s<=sent)return false;if(!RANK)return true;return RANK.length<30||s>RANK[RANK.length-1].s}
 async function submitScore(name,xid){
   const a=await fbAuth();
   await fbPut(DBP+'/replays/'+a.uid,{seed:g.seed,r:encRec(g.rec),v:VER},a);
-  await fbPut(DBP+'/scores/'+a.uid,{n:name,x:xid,s:g.score,c:g.n,f:g.endF||g.f,t:{'.sv':'timestamp'},seed:g.seed,v:VER},a);
-  lsSet('furo2_sent',g.score);lsSet('furo_name',name);lsSet('furo_x',xid);await loadRanking(true);
+  await fbPut(DBP+'/scores/'+a.uid,{n:name,x:xid,s:g.score,c:g.n,f:g.endF||g.f,ti:titleCode(g),t:{'.sv':'timestamp'},seed:g.seed,v:VER},a);
+  lsSet('furo3_sent',g.score);lsSet('furo_name',name);lsSet('furo_x',xid);await loadRanking(true);
 }
 
 // ============================================================
@@ -806,8 +863,8 @@ async function submitScore(name,xid){
 // ============================================================
 function langSel(){return `<select id="lang" aria-label="language">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}"${k===LANG?' selected':''}>${v}</option>`).join('')}</select>`}
 function bindLang(){const s=document.getElementById('lang');if(s)s.onchange=()=>{LANG=s.value;lsSet('furo_lang',LANG);document.documentElement.lang=LANG==='zh'?'zh-Hant':LANG;showTitle()}}
-function getBest(){return lsGet('furo2_best')}
-function bestText(){const b=getBest();return b?`${T().best}：${b.s.toLocaleString('en-US')}cm（${b.n}${T().items}・${rankOf(b.s)}）`:`${T().best}：${T().none}`}
+function getBest(){return lsGet('furo3_best')}
+function bestText(){const b=getBest();return b?`${T().best}：${b.s.toLocaleString('en-US')}cm（${b.n}${T().items}）`:`${T().best}：${T().none}`}
 function showTitle(){
   mode='title';ov.className='';bgmStop();document.getElementById('rpbar').hidden=true;
   const tx=T();
@@ -828,25 +885,28 @@ function start(seed){
 }
 function finish(){
   mode='over';
-  if(!g.replay){const b=getBest();g.newBest=g.score>0&&(!b||g.score>b.s);if(g.newBest)lsSet('furo2_best',{s:g.score,n:g.n})}
+  if(!g.replay){const b=getBest();g.newBest=g.score>0&&(!b||g.score>b.s);if(g.newBest)lsSet('furo3_best',{s:g.score,n:g.n,ti:titleCode(g)})}
   showResult();
 }
 function showResult(){
   ov.className='';const tx=T();
-  const s=g.score,n=g.n,rk=rankOf(s),rp=!!g.replay;
+  const s=g.score,n=g.n,code=titleCode(g),rk=titleText(code),rp=!!g.replay;
   const big=g.big?`${iname(g.big.id)}（${g.big.size}cm）`:'—';
   document.getElementById('rpbar').hidden=true;
   ov.innerHTML=`<div class="box"><h2>${rp?tx.rpEnd:tx[g.dead]}</h2>
    <div class="big">${s.toLocaleString('en-US')}<small>cm</small></div>
-   <p class="cnt">${n}${tx.items}　<b>${escH(rk)}</b><br><small>${tx.biggest}：${escH(big)}</small></p>
+   <p class="ttl">${escH(rk)}</p>
+   <p class="cnt">${n}${tx.items}（■${g.cnt.box}　●${g.cnt.ball}　▲${g.cnt.cone}）<br><small>${tx.biggest}：${escH(big)}</small></p>
+   <div class="gwrap"><canvas id="gph" width="600" height="220"></canvas><p class="note gl">${tx.graph}</p></div>
    ${rp?'':(g.newBest?`<p class="nb">${tx.nb}</p>`:'')+`<p class="best">${bestText()}</p><div id="entry"></div>`}
    ${rp?`<button class="main" id="bk2">${tx.toRank}</button>`:`<button class="main" id="re">${tx.again}</button>
    <div class="row"><button class="s" id="sh">${tx.share}</button><button class="s" id="rk2">${tx.rank}</button><button class="s dark" id="tt">${tx.toTitle}</button></div>`}</div>`;
+  drawGraph(document.getElementById('gph'),g);
   if(rp){document.getElementById('bk2').onclick=()=>showRanking();return}
   document.getElementById('re').onclick=()=>{initAudio();start()};
   document.getElementById('tt').onclick=()=>{g=null;resetFX();showTitle()};
   document.getElementById('rk2').onclick=()=>showRanking();
-  document.getElementById('sh').onclick=()=>{window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(tx.shareTxt(n,s.toLocaleString('en-US'),rk))+'&url='+encodeURIComponent('https://nasubi-no-oniwa.github.io/furoya-no-onna/'),'_blank','noopener')};
+  document.getElementById('sh').onclick=()=>{window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(tx.shareTxt(n,s.toLocaleString('en-US'),rk.replace(/^★/,'')))+'&url='+encodeURIComponent('https://nasubi-no-oniwa.github.io/furoya-no-onna/'),'_blank','noopener')};
   const gg=g;
   (async()=>{if(!NET_OK||s<=0)return;try{await loadRanking()}catch(_){}
     if(g!==gg||!canEnter(s))return;const box=document.getElementById('entry');if(!box)return;
@@ -862,12 +922,27 @@ function showResult(){
       catch(e){msg.textContent=tx.sendFail;document.getElementById('esend').disabled=false}};
   })();
 }
+// 失敗までの力のグラフ（最後の5秒）
+function drawGraph(cvs,G){
+  if(!cvs)return;const c=cvs.getContext('2d'),W=cvs.width,H=cvs.height;
+  c.fillStyle='rgba(0,0,0,.35)';c.fillRect(0,0,W,H);
+  const h=G.hist||[];const N=Math.min(300,h.length/3|0);if(N<2)return;
+  const st=h.length/3-N;const X=i=>8+(W-16)*i/(N-1),Y=v=>H-8-(H-16)*clamp(v/1.15,0,1);
+  // ちょうどいい範囲（緑の帯）
+  c.beginPath();for(let i=0;i<N;i++){const k=(st+i)*3;c.lineTo(X(i),Y(h[k+2]))}for(let i=N-1;i>=0;i--){const k=(st+i)*3;c.lineTo(X(i),Y(h[k+1]))}c.closePath();
+  c.fillStyle='rgba(90,200,110,.45)';c.fill();c.strokeStyle='rgba(140,240,150,.8)';c.lineWidth=1.5;c.stroke();
+  // 自分の力（白・強すぎ赤・弱すぎ青）
+  c.lineWidth=4;c.lineCap='round';
+  for(let i=1;i<N;i++){const k0=(st+i-1)*3,k=(st+i)*3,P=h[k];c.strokeStyle=P>h[k+2]?'#ff4a4a':P<h[k+1]?'#5aa8ff':'#ffffff';c.beginPath();c.moveTo(X(i-1),Y(h[k0]));c.lineTo(X(i),Y(P));c.stroke()}
+  // 最後に×
+  const kl=(st+N-1)*3,xl=X(N-1),yl=Y(h[kl]);c.strokeStyle='#ffe066';c.lineWidth=4;c.beginPath();c.moveTo(xl-9,yl-9);c.lineTo(xl+9,yl+9);c.moveTo(xl+9,yl-9);c.lineTo(xl-9,yl+9);c.stroke();
+}
 async function showRanking(){
   mode='title';bgmStop();ov.className='';const tx=T();
   ov.innerHTML=`<div class="box"><h2>${tx.rank}</h2><p>${tx.loading}</p></div>`;
   let list=null,err=false;try{list=await loadRanking(true)}catch(_){err=true}
   const me=(lsGet('furo_auth')||{}).uid;
-  const rows=(list||[]).map((r,i)=>`<tr${r.u===me?' class="me"':''}><td>${i+1}</td><td class="nm">${escH(r.n)}${r.x?`<br><a href="https://x.com/${escH(r.x)}" target="_blank" rel="noopener">@${escH(r.x)}</a>`:''}</td><td><b>${(+r.s).toLocaleString('en-US')}</b>cm<br><small>${escH(rankOf(r.s))}</small></td><td><button class="s pv" data-u="${escH(r.u)}" data-n="${escH(r.n)}" aria-label="replay">▶</button></td></tr>`).join('');
+  const rows=(list||[]).map((r,i)=>`<tr${r.u===me?' class="me"':''}><td>${i+1}</td><td class="nm">${escH(r.n)}<br><small class="rt">${escH(titleText(r.ti)||bodyOf(r.s))}</small>${r.x?`<br><a href="https://x.com/${escH(r.x)}" target="_blank" rel="noopener">@${escH(r.x)}</a>`:''}</td><td><b>${(+r.s).toLocaleString('en-US')}</b>cm</td><td><button class="s pv" data-u="${escH(r.u)}" data-n="${escH(r.n)}" aria-label="replay">▶</button></td></tr>`).join('');
   ov.innerHTML=`<div class="box"><h2>${tx.rkTitle}</h2>
    ${!NET_OK?`<p>${tx.rkWait}</p>`:err?`<p>${tx.rkFail}</p>`:list.length?`<div class="tbl"><table>${rows}</table></div><p class="note">${tx.rkNote}</p>`:`<p>${tx.rkEmpty}</p>`}
    <button class="main" id="bk">${tx.back}</button></div>`;
