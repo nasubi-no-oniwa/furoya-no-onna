@@ -79,7 +79,13 @@ td a{color:#9fd4ff;font-size:12px}
 .rt{color:#ffd47a;font-size:11px;line-height:1.4}
 .spin{font-family:"Dela Gothic One",sans-serif;font-size:34px;color:#ffc65a;letter-spacing:.3em;margin:10px 0 4px}
 .spin span{display:inline-block;animation:hop .9s ease-in-out infinite}.spin span:nth-child(2){animation-delay:.15s}.spin span:nth-child(3){animation-delay:.3s}
-#shimg{width:100%;height:46px;margin:6px 0 0;font-size:16px}
+#shimg,#rewatch{width:100%;height:46px;margin:6px 0 0;font-size:16px}
+#ov.titlev{align-items:flex-end;background:linear-gradient(rgba(20,6,6,0) 30%,rgba(20,6,6,.55) 62%);backdrop-filter:none;-webkit-backdrop-filter:none;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+#ov.titlev .box{padding:14px 14px 12px;margin:0 auto}
+.howd{margin:0 0 8px;text-align:left}.howd summary{cursor:pointer;font-weight:900;color:#ffc65a;font-size:14px;padding:4px 0;list-style:none;text-align:center}.howd summary::-webkit-details-marker{display:none}.howd .how{margin:6px 0 4px}
+#ov.titlev h1{font-size:40px}
+#ov.titlev .how{font-size:12.5px;line-height:1.6;padding:8px 10px;margin-bottom:10px}
+#ov.titlev .sub{margin:4px 0 8px;font-size:14px}
 @keyframes hop{50%{transform:translateY(-10px)}}
 @media (prefers-reduced-motion:reduce){.nb,.spin span{animation:none}}
 </style>
@@ -126,7 +132,7 @@ ja:{title:'穴の神隠し',sub:'ムリムリ出てくる○△■を、綱で�
  needNick:'ニックネームを入れてください',badX:'XのIDは英数字と _ だけです',sending:'登録中…',sent:'登録しました！',sendFail:'登録できませんでした。少し時間をおいてもう一度。',
  rkTitle:'ランキング 上位30',rkWait:'ランキングは準備中です',rkFail:'読みこめませんでした',rkEmpty:'まだ記録がありません',rkNote:'▶ でその人のプレイを見られます',back:'もどる',
  rpLoad:'再生を読みこみ中…',rpFail:'再生できませんでした',rpNow:'再生中：',rpStop:'やめる',rpEnd:'再生おわり',toRank:'ランキングへ',place:'位',
- gold:'金の',prac:'練習：この1個は失敗しません',imgShare:'画像で共有・保存',graph:'最後の5秒の力　緑＝ちょうどいい範囲　<span style="color:#ff7a7a">赤＝強すぎ</span>　<span style="color:#8cc4ff">青＝弱すぎ</span>',shareTxt:(n,cm,rk)=>`穴の神隠しで、巨大なお尻から○△■を${n}個・合計${cm}cm引っぱり出して\n称号「${rk}」になった！\n#穴の神隠し`,
+ gold:'金の',prac:'練習：この1個は失敗しません',imgShare:'画像で共有・保存',rewatch:'いまのを見る',rewatchMe:'いまのプレイ',howTitle:'▼ 遊び方',graph:'最後の5秒の力　緑＝ちょうどいい範囲　<span style="color:#ff7a7a">赤＝強すぎ</span>　<span style="color:#8cc4ff">青＝弱すぎ</span>',shareTxt:(n,cm,rk)=>`穴の神隠しで、巨大なお尻から○△■を${n}個・合計${cm}cm引っぱり出して\n称号「${rk}」になった！\n#穴の神隠し`,
  ranks:['見習い','下働き','湯女','釜焚き名人','番台','若女将','女将','大女将','湯屋の主','伝説の湯女'],
  shapes:{box:'四角',ball:'丸',cone:'三角'},nogl:'この端末では3Dが表示できませんでした',
  credit:'絵・音：ゲーム内で自作',muri:['ムリ…','ムリムリ…','ミチミチ…','むにゅ…','ぬちゃ…'],buri:'ぶりっ！',buriBig:'ぶりゅりゅりゅっ！',fuu:'ふぅ…'},
@@ -140,7 +146,7 @@ en:{title:'穴の神隠し',sub:'Pull the ○△■ squeezing out of the giant b
  needNick:'Enter a nickname',badX:'X ID: letters, numbers and _ only',sending:'Submitting…',sent:'Submitted!',sendFail:'Could not submit. Try again later.',
  rkTitle:'Top 30',rkWait:'Ranking is not ready yet',rkFail:'Could not load',rkEmpty:'No records yet',rkNote:'Tap ▶ to watch a replay',back:'Back',
  rpLoad:'Loading replay…',rpFail:'Could not play replay',rpNow:'Replay: ',rpStop:'Stop',rpEnd:'Replay over',toRank:'To ranking',place:'',
- gold:'Golden',prac:'Practice: this one can\'t fail',imgShare:'Share / save image',graph:'Your pull in the last 5 s. Green = just right, <span style="color:#ff7a7a">red = too hard</span>, <span style="color:#8cc4ff">blue = too weak</span>',shareTxt:(n,cm,rk)=>`In Ana no Kamikakushi I pulled ${n} ○△■ (${cm}cm) out of a giant butt.\nTitle: "${rk}"\n#穴の神隠し`,
+ gold:'Golden',prac:'Practice: this one can\'t fail',imgShare:'Share / save image',rewatch:'Watch that again',rewatchMe:'your last run',howTitle:'▼ How to play',graph:'Your pull in the last 5 s. Green = just right, <span style="color:#ff7a7a">red = too hard</span>, <span style="color:#8cc4ff">blue = too weak</span>',shareTxt:(n,cm,rk)=>`In Ana no Kamikakushi I pulled ${n} ○△■ (${cm}cm) out of a giant butt.\nTitle: "${rk}"\n#穴の神隠し`,
  ranks:['Trainee','Helper','Bath Girl','Boiler Master','Front Desk','Young Proprietress','Proprietress','Grand Proprietress','Bathhouse Owner','Legendary Bath Girl'],
  shapes:{box:'Cube',ball:'Ball',cone:'Cone'},nogl:'3D could not be shown on this device',
  credit:'Art & sound: made in-game',muri:['Squeeze…','Squish…','Mmmf…','Nngh…','Splurch…'],buri:'PLOP!',buriBig:'PLOOOORP!',fuu:'Phew…'},
@@ -154,7 +160,7 @@ zh:{title:'穴の神隠し',sub:'用繩子把擠出來的○△■拉出來！',
  needNick:'請輸入暱稱',badX:'X的ID只能用英數字和 _',sending:'登錄中…',sent:'登錄完成！',sendFail:'無法登錄，請稍後再試。',
  rkTitle:'排行榜 前30名',rkWait:'排行榜準備中',rkFail:'讀取失敗',rkEmpty:'還沒有紀錄',rkNote:'按 ▶ 可以觀看重播',back:'返回',
  rpLoad:'讀取重播中…',rpFail:'無法播放重播',rpNow:'重播中：',rpStop:'停止',rpEnd:'重播結束',toRank:'前往排行榜',place:'名',
- gold:'金色',prac:'練習：這一個不會失敗',imgShare:'以圖片分享・儲存',graph:'最後5秒的力道　綠＝剛剛好　<span style="color:#ff7a7a">紅＝太用力</span>　<span style="color:#8cc4ff">藍＝太輕</span>',shareTxt:(n,cm,rk)=>`我在「穴の神隠し」從巨大屁股拉出了${n}個○△■，合計${cm}cm\n稱號「${rk}」！\n#穴の神隠し`,
+ gold:'金色',prac:'練習：這一個不會失敗',imgShare:'以圖片分享・儲存',rewatch:'再看一次',rewatchMe:'剛才的遊玩',howTitle:'▼ 玩法',graph:'最後5秒的力道　綠＝剛剛好　<span style="color:#ff7a7a">紅＝太用力</span>　<span style="color:#8cc4ff">藍＝太輕</span>',shareTxt:(n,cm,rk)=>`我在「穴の神隠し」從巨大屁股拉出了${n}個○△■，合計${cm}cm\n稱號「${rk}」！\n#穴の神隠し`,
  ranks:['見習生','雜工','湯女','燒鍋名人','櫃台','少老闆娘','老闆娘','大老闆娘','湯屋之主','傳說湯女'],
  shapes:{box:'方塊',ball:'圓球',cone:'三角錐'},nogl:'此裝置無法顯示3D',
  credit:'圖・音效：遊戲內自製',muri:['嗯…','嗯嗯…','擠擠…','咕啾…','噗滋…'],buri:'噗！',buriBig:'噗嚕嚕嚕！',fuu:'呼…'},
@@ -168,7 +174,7 @@ ko:{title:'穴の神隠し',sub:'밀려 나오는 ○△■를 밧줄로 끌어�
  needNick:'닉네임을 입력하세요',badX:'X 아이디는 영문, 숫자, _ 만 가능합니다',sending:'등록 중…',sent:'등록했습니다!',sendFail:'등록하지 못했습니다. 잠시 후 다시 시도하세요.',
  rkTitle:'랭킹 상위 30',rkWait:'랭킹 준비 중입니다',rkFail:'불러오지 못했습니다',rkEmpty:'아직 기록이 없습니다',rkNote:'▶ 를 누르면 플레이를 볼 수 있습니다',back:'돌아가기',
  rpLoad:'리플레이 불러오는 중…',rpFail:'리플레이를 재생할 수 없습니다',rpNow:'재생 중: ',rpStop:'그만',rpEnd:'재생 끝',toRank:'랭킹으로',place:'위',
- gold:'황금',prac:'연습: 이건 실패하지 않아요',imgShare:'이미지로 공유・저장',graph:'마지막 5초의 힘　초록＝딱 좋음　<span style="color:#ff7a7a">빨강＝너무 셈</span>　<span style="color:#8cc4ff">파랑＝너무 약함</span>',shareTxt:(n,cm,rk)=>`「穴の神隠し」에서 거대한 엉덩이에서 ○△■ ${n}개, 합계 ${cm}cm를 끌어냈다\n칭호 「${rk}」!\n#穴の神隠し`,
+ gold:'황금',prac:'연습: 이건 실패하지 않아요',imgShare:'이미지로 공유・저장',rewatch:'방금 플레이 보기',rewatchMe:'방금 플레이',howTitle:'▼ 플레이 방법',graph:'마지막 5초의 힘　초록＝딱 좋음　<span style="color:#ff7a7a">빨강＝너무 셈</span>　<span style="color:#8cc4ff">파랑＝너무 약함</span>',shareTxt:(n,cm,rk)=>`「穴の神隠し」에서 거대한 엉덩이에서 ○△■ ${n}개, 합계 ${cm}cm를 끌어냈다\n칭호 「${rk}」!\n#穴の神隠し`,
  ranks:['견습생','허드레꾼','목욕탕 아가씨','불때기 명인','카운터','젊은 여주인','여주인','큰 여주인','목욕탕 주인','전설의 목욕탕 아가씨'],
  shapes:{box:'네모',ball:'동그라미',cone:'세모'},nogl:'이 기기에서는 3D를 표시할 수 없습니다',
  credit:'그림・소리: 게임 내 자작',muri:['끄응…','끙끙…','미끌…','물컹…','질척…'],buri:'뿡!',buriBig:'뿌르르르륵!',fuu:'후우…'}
@@ -197,7 +203,7 @@ function titleCode(G){
   const mi=(G.dead==='slip'?10:0)+ab;
   return pi+'-'+mi+'-'+bodyIx(G.score);
 }
-function TT(){const d=window.FURO_TITLES||{};return LANG==='ja'?d.ja:(d.en||d.ja)}
+function TT(){const d=window.FURO_TITLES||{};return d[LANG]||d.en||d.ja}
 function titleText(code){
   const L=TT();if(!L||!code)return '';
   if(/^r\d$/.test(code))return '★'+(L.rare[code]||'');
@@ -206,7 +212,7 @@ function titleText(code){
   const pre=pi<6?L.pre.box[pi]:pi<12?L.pre.ball[pi-6]:pi<18?L.pre.cone[pi-12]:L.pre.mix[pi-18];
   const mid=mi<10?L.mid.snap[mi]:L.mid.slip[mi-10];
   const body=L.body[bi];
-  return [pre,mid,body].filter(Boolean).join(' ');
+  return [pre,mid,body].filter(Boolean).join(LANG==='zh'?'':' ');
 }
 function bodyOf(cm){const L=TT();return L?L.body[bodyIx(cm)]:rankOf(cm)}
 const iname=id=>SHAPE_MARK[id]+' '+T().shapes[id];
@@ -297,6 +303,7 @@ const SIM_ONLY=new URLSearchParams(location.search).get('sim')==='1';
 // ============================================================
 //  音（その場で合成）
 // ============================================================
+let DEMO_MUTE=false;
 let AC=null,MASTER=null,BGM_G=null,SE_G=null,muted=!!lsGet('furo_mute');
 function initAudio(){
   if(AC){if(AC.state==='suspended')AC.resume();return}
@@ -306,11 +313,11 @@ function initAudio(){
   SE_G=AC.createGain();SE_G.gain.value=0.8;SE_G.connect(MASTER);
 }
 function setMute(m){muted=m;lsSet('furo_mute',m);if(MASTER)MASTER.gain.setTargetAtTime(m?0:0.9,AC.currentTime,0.05);document.getElementById('mute').textContent=m?'🔇':'🔊'}
-function tone(freq,dur,type,vol,dest,slide,at){if(!AC)return;const t=at||AC.currentTime;const o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(20,slide),t+dur);
+function tone(freq,dur,type,vol,dest,slide,at){if(!AC||(DEMO_MUTE&&dest!==BGM_G))return;const t=at||AC.currentTime;const o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(20,slide),t+dur);
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||0.3,t+0.008);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);o.connect(g);g.connect(dest||SE_G);o.start(t);o.stop(t+dur+0.02)}
 let NOISE=null;
 function noiseBuf(){if(NOISE)return NOISE;const b=AC.createBuffer(1,AC.sampleRate*1.2,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return NOISE=b}
-function noise(dur,f1,f2,vol,q,at){if(!AC)return;const t=at||AC.currentTime;const s=AC.createBufferSource();s.buffer=noiseBuf();const bp=AC.createBiquadFilter();bp.type='bandpass';bp.Q.value=q||1;bp.frequency.setValueAtTime(f1,t);if(f2)bp.frequency.exponentialRampToValueAtTime(f2,t+dur);
+function noise(dur,f1,f2,vol,q,at){if(!AC||DEMO_MUTE)return;const t=at||AC.currentTime;const s=AC.createBufferSource();s.buffer=noiseBuf();const bp=AC.createBiquadFilter();bp.type='bandpass';bp.Q.value=q||1;bp.frequency.setValueAtTime(f1,t);if(f2)bp.frequency.exponentialRampToValueAtTime(f2,t+dur);
   const g=AC.createGain();g.gain.setValueAtTime(vol||0.4,t);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);s.connect(bp);bp.connect(g);g.connect(SE_G);s.start(t);s.stop(t+dur+0.05)}
 const SE={
   pop(size){const k=clamp(size/200,0.2,1.6);noise(0.18,900,180,0.5,2);tone(320-k*80,0.2,'sine',0.5,null,90);
@@ -816,7 +823,7 @@ function render3D(dt,t){
   drawMannequin(J,gg&&gg.dead?3:lvl,over,t,gg&&gg.dead);
   if(!gg||!gg.dead){if(lvl>=2&&live&&Math.random()<dt*(lvl===3?14:4))spawnPart(J.head.clone().add(V3(0,0.15,0)),V3(-0.6-Math.random()*0.8,1.2+Math.random(),0.3),0.025+Math.random()*0.015,0x9fd8ff,0.7)}
   // 綱
-  const ropeOn=gg&&(mode==='play'||mode==='dying');
+  const ropeOn=gg&&(mode==='play'||mode==='dying'||gg.demo);
   W3.rope.visible=false;W3.rope2.visible=false;
   if(ropeOn&&(front||gg.phase==='pop')){
     const end=front||hole.clone().addScaledVector(dir,0.06);
@@ -838,13 +845,15 @@ function render3D(dt,t){
   FX.flying=FX.flying.filter(f=>!f.done);
   updParts(dt);
   // カメラのゆれ
-  if(CAM.userData.base){CAM.position.copy(CAM.userData.base);if(FX.shake>0){CAM.position.x+=(Math.random()-0.5)*FX.shake*0.012;CAM.position.y+=(Math.random()-0.5)*FX.shake*0.012;FX.shake=Math.max(0,FX.shake-dt*30)}}
+  // タイトル画面では場面を上に寄せて、下の枠に隠れないようにする
+  FX.camOff=lerp(FX.camOff||0,mode==='title'?1:0,Math.min(1,dt*3));
+  if(CAM.userData.base){CAM.position.copy(CAM.userData.base);const k=FX.camOff;CAM.position.z*=1+0.3*k;CAM.position.y+=0.2*k;CAM.lookAt(0.3,2.5-1.9*k,0);if(FX.shake>0){CAM.position.x+=(Math.random()-0.5)*FX.shake*0.012;CAM.position.y+=(Math.random()-0.5)*FX.shake*0.012;FX.shake=Math.max(0,FX.shake-dt*30)}}
   R3.render(SCN,CAM);
   if(AC&&mode==='play')creak(over*(gg.grace>0?0.3:1));
 }
 
 // ---------- 振動（対応している端末だけ） ----------
-function vib(p){if(!g||g.replay)return;try{if(navigator.vibrate)navigator.vibrate(p)}catch(_){}}
+function vib(p){if(!g||g.replay||g.demo)return;try{if(navigator.vibrate)navigator.vibrate(p)}catch(_){}}
 // ---------- シミュレーションからの出来事 ----------
 function handleEvents(){
   if(!g)return;
@@ -878,7 +887,9 @@ function handleEvents(){
     else if(e.k==='loose'){SE.rumble();FX.shake=6;FX.lurch=0.25;FX.wob=0.6}
     else if(e.k==='stuck'){SE.rumble();FX.shake=6;FX.clench=1;FX.lurch=-0.12}
     else if(e.k==='snap'||e.k==='slip'){
-      mode='dying';FX.deathT=0;bgmStop();
+      FX.deathT=0;
+      if(g.demo){if(e.k==='snap'){FX.shake=10;for(let i=0;i<20;i++)spawnPart(V3(0.2,1.9,0.6),V3((Math.random()-0.5)*4,Math.random()*3,(Math.random()-0.5)*2),0.02,0xe8c07a,0.8)}else FX.clench=1;continue}
+      mode='dying';bgmStop();FX.slowSkip=false;
       vib(220);
       if(e.k==='snap'){SE.snap();FX.shake=16;FX.flash=0.45;for(let i=0;i<20;i++)spawnPart(V3(0.2,1.9,0.6),V3((Math.random()-0.5)*4,Math.random()*3,(Math.random()-0.5)*2),0.02,0xe8c07a,0.8)}
       else{SE.slip();FX.shake=10;FX.clench=1}
@@ -891,6 +902,7 @@ function handleEvents(){
 // ============================================================
 let pressed=0;
 function down(e){
+  if(mode==='dying'){FX.slowSkip=true;return}
   if(mode!=='play'||!g||g.replay)return;
   initAudio();pressed++;setHold(g,true);if(e&&e.cancelable)e.preventDefault();
 }
@@ -937,11 +949,24 @@ function langSel(){return `<select id="lang" aria-label="language">${Object.entr
 function bindLang(){const s=document.getElementById('lang');if(s)s.onchange=()=>{LANG=s.value;lsSet('furo_lang',LANG);document.documentElement.lang=LANG==='zh'?'zh-Hant':LANG;showTitle()}}
 function getBest(){return lsGet('furo4_best')}
 function bestText(){const b=getBest();return b?`${T().best}：${b.s.toLocaleString('en-US')}cm（${b.n}${T().items}）`:`${T().best}：${T().none}`}
+// ---------- タイトル画面のデモ ----------
+let demoTimer=null,LASTPLAY=null;
+function startDemo(){
+  if(mode!=='title'||!GL_OK)return;
+  resetFX();g=newGame((Math.random()*2**31)|0);g.demo=true;g.demoFail=5+((Math.random()*8)|0);g.demoNoise=0;acc=0;
+}
+function demoBot(){ // ちょっとへたな人：ゆらぎながら追いかけ、何個か出したらわざと失敗
+  const it=g.item;g.demoNoise=clamp(g.demoNoise+(Math.random()-0.5)*0.05,-it.W*0.9,it.W*0.9);
+  let tgt=it.T+g.demoNoise;if(g.n>=g.demoFail)tgt=g.demoFail%2?it.T+it.W+0.3:it.T-it.W-0.3;
+  g.hold=g.P<tgt;
+}
+function stopDemo(){clearTimeout(demoTimer);if(g&&g.demo){g=null;resetFX()}}
 function showTitle(){
-  mode='title';ov.className='';bgmStop();document.getElementById('rpbar').hidden=true;
+  mode='title';ov.className='titlev';bgmStop();document.getElementById('rpbar').hidden=true;
+  clearTimeout(demoTimer);demoTimer=setTimeout(startDemo,3000);
   const tx=T();
   ov.innerHTML=`<div class="box"><h1>${tx.title}</h1><p class="sub">${tx.sub}</p>
-   <div class="how">${tx.how}</div>
+   <details class="howd"><summary>${tx.howTitle}</summary><div class="how">${tx.how}</div></details>
    <button class="main" id="go" ${GL_OK?'':'disabled'}>${GL_OK?tx.start:tx.nogl}</button>
    <p class="best">${bestText()}</p>
    <div class="row"><button class="s" id="rk">${tx.rank}</button>${langSel()}</div>
@@ -951,34 +976,39 @@ function showTitle(){
   document.getElementById('rk').onclick=()=>showRanking();
 }
 function start(seed){
+  clearTimeout(demoTimer);
   resetFX();
   g=newGame(seed!=null?seed:(Math.random()*2**31)|0);
   pressed=0;mode='play';ov.className='hide';ov.innerHTML='';bgmStart();SE.go();
 }
 function finish(){
   mode='over';
+  if(!g.replay){LASTPLAY={seed:g.seed,r:encRec(g.rec)};}
   if(!g.replay){const b=getBest();g.newBest=g.score>0&&(!b||g.score>b.s);if(g.newBest)lsSet('furo4_best',{s:g.score,n:g.n,ti:titleCode(g)})}
   showResult();
 }
 function showResult(){
   ov.className='';const tx=T();
-  const s=g.score,n=g.n,code=titleCode(g),rk=titleText(code),rp=!!g.replay;
+  const s=g.score,n=g.n,code=titleCode(g),rk=titleText(code),own=!!(g.replay&&g.replay.own),rp=!!g.replay&&!own;
   const big=g.big?`${iname(g.big.id)}（${g.big.size}cm）`:'—';
   document.getElementById('rpbar').hidden=true;
-  ov.innerHTML=`<div class="box"><h2>${rp?tx.rpEnd:tx[g.dead]}</h2>
+  ov.innerHTML=`<div class="box"><h2>${rp||own?tx.rpEnd:tx[g.dead]}</h2>
    <div class="big">${s.toLocaleString('en-US')}<small>cm</small></div>
    <p class="ttl"${/^★/.test(rk)?' style="word-break:normal"':''}>${escH(rk)}</p>
    <p class="cnt">${n}${tx.items}（■${g.cnt.box}　●${g.cnt.ball}　▲${g.cnt.cone}）<br><small>${tx.biggest}：${escH(big)}</small></p>
    <div class="gwrap"><canvas id="gph" width="600" height="220"></canvas><p class="note gl">${tx.graph}</p></div>
-   ${rp?'':(g.newBest?`<p class="nb">${tx.nb}</p>`:'')+`<p class="best">${bestText()}</p><div id="entry"></div>`}
+   ${rp||own?'':(g.newBest?`<p class="nb">${tx.nb}</p>`:'')+`<p class="best">${bestText()}</p><div id="entry"></div>`}
    ${rp?`<button class="main" id="bk2">${tx.toRank}</button>`:`<button class="main" id="re">${tx.again}</button>
    <button class="s img" id="shimg">📷 ${tx.imgShare}</button>
+   ${LASTPLAY?`<button class="s img dark" id="rewatch">▶ ${tx.rewatch}</button>`:''}
    <div class="row"><button class="s" id="sh">${tx.share}</button><button class="s" id="rk2">${tx.rank}</button><button class="s dark" id="tt">${tx.toTitle}</button></div>`}</div>`;
   drawGraph(document.getElementById('gph'),g);
   if(rp){document.getElementById('bk2').onclick=()=>showRanking();return}
   document.getElementById('re').onclick=()=>{initAudio();start()};
   document.getElementById('tt').onclick=()=>{g=null;resetFX();showTitle()};
   document.getElementById('rk2').onclick=()=>showRanking();
+  {const b=document.getElementById('rewatch');if(b)b.onclick=()=>{const L=LASTPLAY;initAudio();resetFX();g=newGame(L.seed);g.replay={ev:decRec(L.r),i:0,own:true};mode='play';acc=0;ov.className='hide';bgmStart();
+    document.getElementById('rpbar').hidden=false;document.getElementById('rpname').textContent=tx.rpNow+tx.rewatchMe;document.getElementById('rpstop').textContent=tx.rpStop}}
   document.getElementById('shimg').onclick=()=>shareImage(tx.shareTxt(n,s.toLocaleString('en-US'),rk.replace(/^★/,'')),rk,s,n);
   document.getElementById('sh').onclick=()=>{window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(tx.shareTxt(n,s.toLocaleString('en-US'),rk.replace(/^★/,'')))+'&url='+encodeURIComponent('https://nasubi-no-oniwa.github.io/furoya-no-onna/'),'_blank','noopener')};
   const gg=g;
@@ -1034,6 +1064,7 @@ function drawGraph(cvs,G){
   const kl=(st+N-1)*3,xl=X(N-1),yl=Y(h[kl]);c.strokeStyle='#ffe066';c.lineWidth=4;c.beginPath();c.moveTo(xl-9,yl-9);c.lineTo(xl+9,yl+9);c.moveTo(xl+9,yl-9);c.lineTo(xl-9,yl+9);c.stroke();
 }
 async function showRanking(){
+  stopDemo();
   mode='title';bgmStop();ov.className='';const tx=T();
   ov.innerHTML=`<div class="box"><h2>${tx.rank}</h2><p>${tx.loading}</p></div>`;
   let list=null,err=false;try{list=await loadRanking(true)}catch(_){err=true}
@@ -1052,7 +1083,7 @@ async function playReplay(u,name){
     document.getElementById('rpbar').hidden=false;document.getElementById('rpname').textContent=tx.rpNow+(name||'');document.getElementById('rpstop').textContent=tx.rpStop;
   }catch(e){ov.innerHTML=`<div class="box"><h2>${tx.rpFail}</h2><button class="main" id="tt2">${tx.back}</button></div>`;document.getElementById('tt2').onclick=showRanking}
 }
-document.getElementById('rpstop').onclick=()=>{document.getElementById('rpbar').hidden=true;g=null;resetFX();showRanking()};
+document.getElementById('rpstop').onclick=()=>{document.getElementById('rpbar').hidden=true;if(g&&g.replay&&g.replay.own){while(!g.dead)simStep(g);g.ev=[];finish();return}g=null;resetFX();showRanking()};
 document.getElementById('mute').onclick=()=>{initAudio();setMute(!muted)};
 
 // ============================================================
@@ -1062,14 +1093,24 @@ let last=performance.now(),acc=0;const STEP=1/FPS;
 function loop(ts){
   const dt=Math.min(0.1,Math.max(0,(ts-last)/1000));last=ts;const t=ts/1000;
   if(stage.clientWidth!==cw||stage.clientHeight!==chh)resize();
+  let dv=dt;   // 見た目の時間（失敗の瞬間はスロー）
   if(g&&(mode==='play'||mode==='dying')){
     acc+=dt;let n=0;while(acc>=STEP&&n<8){simStep(g);acc-=STEP;n++}if(n>=8)acc=0;
     handleEvents();
-    if(mode==='dying'){FX.deathT+=dt;if(FX.deathT>1.5)finish()}
+    if(mode==='dying'){
+      const slow=!FX.slowSkip&&FX.deathT<0.3;   // 最初の約1.2秒は4分の1の速さ
+      dv=slow?dt*0.25:dt;FX.deathT+=dv;
+      if(FX.deathT>1.5)finish()}
     // 重い端末は自動で軽量モードに（はじめの4秒の平均で判断）
     if(!LITE&&FX.fpsT<4){FX.fpsT+=dt;FX.fpsN++;if(FX.fpsT>=4&&FX.fpsN/FX.fpsT<38)setLite()}
   }
-  render3D(dt,t);drawOverlay(dt,t);
+  // タイトル画面の自動デモ（開いて3秒後から）
+  if(g&&g.demo&&mode==='title'){
+    if(!g.dead){acc+=dt;let n=0;while(acc>=STEP&&n<8){demoBot();simStep(g);acc-=STEP;n++}if(n>=8)acc=0}
+    DEMO_MUTE=true;handleEvents();DEMO_MUTE=false;
+    if(g.dead){FX.deathT+=dt;if(FX.deathT>2.2)startDemo()}
+  }
+  render3D(dv,t);drawOverlay(dv,t);
   requestAnimationFrame(loop);
 }
 if(!SIM_ONLY){
