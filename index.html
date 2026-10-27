@@ -521,6 +521,64 @@ function orientShape(m,dir,k,t){
   else{m.quaternion.setFromUnitVectors(_up,dir);m.scale.set(k,along,k);if(id==='ball')m.rotateY(t*0.6)}
   if(m.userData.wobbly){const w=Math.sin(t*7)*0.22,w2=Math.sin(t*5.3+1)*0.22;m.scale.x*=1+w;m.scale.y*=1-w*0.6+w2*0.3;m.scale.z*=1+w2}
 }
+// ---------- 数珠（抜けた○△■がヘドロのひもでつながって垂れ下がる） ----------
+const CHAIN_MAX=18;
+let LINK_GEO=null;
+function chainAdd(m){
+  if(!LINK_GEO){LINK_GEO=new THREE.CylinderGeometry(1,1,1,14,6,false);
+    const p=LINK_GEO.attributes.position;for(let i=0;i<p.count;i++){const y=p.getY(i);const k=1+0.35*Math.cos(y*Math.PI);p.setX(i,p.getX(i)*k);p.setZ(i,p.getZ(i)*k)}
+    LINK_GEO.computeVertexNormals();colorize(LINK_GEO,21)}
+  const r=m.userData.r,s1=clamp(0.32/r,0.28,0.75);
+  const link=new THREE.Mesh(LINK_GEO,W3.sludge);SCN.add(link);
+  const b={m,link,r,s1,s:1,pos:m.position.clone(),prev:m.position.clone(),age:0,gone:false};
+  W3.chain.unshift(b);
+  while(W3.chain.length>CHAIN_MAX){const o=W3.chain.pop();SCN.remove(o.m);SCN.remove(o.link)}
+}
+const _cv=V3(0,0,0);
+function chainUpdate(dt,t,anchor,hole,gg){
+  const C=W3.chain;if(!C||!C.length)return;
+  const dead=gg&&gg.dead,slip=dead==='slip',snap=dead==='snap';
+  const h=Math.min(dt,1/30),steps=2,sh=h/steps;
+  for(let st=0;st<steps;st++){
+    for(let i=0;i<C.length;i++){const b=C[i];
+      b.age+=sh;b.s=lerp(b.s,b.s1,Math.min(1,sh*7));
+      const v=_cv.subVectors(b.pos,b.prev).multiplyScalar(0.985);b.prev.copy(b.pos);b.pos.add(v);
+      b.pos.y-=9*sh*sh;
+      // 手前（床の上）へゆっくり流れる、古いものは右へ
+      b.pos.z+=2.6*sh*sh*(b.pos.z<1.6?1:0);if(i>3)b.pos.x+=0.9*sh*sh*(i-3);
+      if(slip){_cv.subVectors(hole,b.pos);b.pos.addScaledVector(_cv,Math.min(1,sh*(2+FX.deathT*6)));}
+    }
+    // つながり（長さをそろえる）
+    for(let it=0;it<6;it++){
+      for(let i=0;i<C.length;i++){const b=C[i];const rr=b.r*b.s;
+        const a=i===0?anchor:C[i-1].pos,ra=i===0?0.02:C[i-1].r*C[i-1].s;
+        if(i===0&&snap)continue;
+        const want=rr+ra+0.12;_cv.subVectors(b.pos,a);const d=_cv.length()||1e-4;const diff=(d-want)/d;
+        if(i===0){b.pos.addScaledVector(_cv,-diff)}else{b.pos.addScaledVector(_cv,-diff*0.5);C[i-1].pos.addScaledVector(_cv,diff*0.5)}
+      }
+      // ぶつかり：いま出てくるもの・湯船のふち・お湯・床
+      const cur=W3.cur&&W3.cur.visible!==false?W3.cur:null;
+      for(const b of C){const rr=b.r*b.s;
+        if(cur){const cr=cur.userData.r;_cv.subVectors(b.pos,cur.position);const d=_cv.length();const mn=cr+rr+0.04;if(d<mn&&d>1e-4){b.pos.addScaledVector(_cv,(mn-d)/d);b.pos.y-=0.01}}
+        if(b.pos.x>-0.8&&b.pos.z>-0.3&&b.pos.z<0.35&&b.pos.y<0.66+rr&&b.pos.y>0.2){b.pos.y=0.66+rr}
+        if(b.pos.x>-0.6&&b.pos.z<-0.05&&b.pos.y<0.48+rr*0.4)b.pos.y=0.48+rr*0.4;
+        if(b.pos.z>=0.35&&b.pos.y<rr)b.pos.y=rr;
+        if(b.pos.z>3)b.pos.z=3;
+      }
+    }
+  }
+  for(let i=0;i<C.length;i++){const b=C[i];const rr=b.r*b.s;
+    b.m.position.copy(b.pos);b.m.scale.setScalar(b.s);
+    const a=i===0?anchor:C[i-1].pos;const d=_cv.subVectors(a,b.pos);const L=d.length();
+    if(L>1e-4){const dn=d.clone().normalize();if(b.m.userData.id==='box')b.m.quaternion.setFromUnitVectors(V3(1,0,0),dn);else b.m.quaternion.setFromUnitVectors(_up,dn)}
+    setDirty(b.m,Math.max(0,0.55-b.age*0.8));
+    // つなぎ目（くびれたソーセージ）
+    const ra=i===0?0.06:C[i-1].r*C[i-1].s;const lr=Math.max(0.035,Math.min(rr,ra)*0.42);
+    b.link.visible=!(i===0&&snap)&&!(slip&&FX.deathT>0.6);
+    placeCyl(b.link,b.pos,a,lr);
+    if(slip){const k=clamp(b.pos.distanceTo(hole)/1.2,0,1);b.m.scale.setScalar(b.s*Math.max(0.05,k))}
+  }
+}
 // ---------- デッサン人形 ----------
 const MANNE={};
 function buildMannequin(){
@@ -626,6 +684,7 @@ const FX={};
 function resetFX(){
   Object.assign(FX,{streak:0,itemDanger:0,blush:0,wave:0,bigWob:false,vibT:0,fpsN:0,fpsT:0,floats:[],shake:0,flash:0,pileN:0,flying:[],wob:0,deathT:0,hint:1,sq:1,back:0,lastProg:null,sfxT:0.6,clench:0,lurch:0,cur:null,curKey:null});
   if(W3.pile){for(const m of W3.pile)SCN.remove(m)}W3.pile=[];
+  if(W3.chain){for(const b of W3.chain){SCN.remove(b.m);if(b.link)SCN.remove(b.link)}}W3.chain=[];
   if(W3.cur){SCN.remove(W3.cur);W3.cur=null}
   if(W3.next){SCN.remove(W3.next);W3.next=null}FX.nextKey=null;FX.hr=null;
   if(W3.parts)for(const p of W3.parts){p.life=0;p.m.visible=false}
@@ -835,7 +894,8 @@ function render3D(dt,t){
     else if(gg.dead==='slip'){const k=Math.min(1,FX.deathT*1.6);const st=J0.hands.clone().lerp(end,k*0.6);setRope(W3.rope,st,end,0.5+k*0.3,0)}
     else setRope(W3.rope,J.hands,end,0.05+under*0.6,over*0.04);
   }
-  // 山になった○△■と飛んでいるもの
+  // つながった数珠
+  chainUpdate(dt,t,front||hole.clone().addScaledVector(dir,0.06),hole,gg);
   for(const f of FX.flying){f.t+=dt;const k=Math.min(1,f.t/f.d),e=1-Math.pow(1-k,2);
     f.m.position.lerpVectors(f.a,f.b,e);f.m.position.y+=Math.sin(k*Math.PI)*f.arc;
     f.m.rotation.x=f.r0+e*f.spin;f.m.rotation.z=f.r0*0.5+e*f.spin*0.7;
@@ -862,12 +922,9 @@ function handleEvents(){
       const it=e.it,big=it.size>=150;
       const hole=HOLE(),m=W3.cur;
       if(m){
-        // 飛ばして床に積む
+        // 数珠の先頭につなぐ（飛んでいかない）
         m.material.clippingPlanes=[];
-        const i=FX.pileN++,r=m.userData.r,s1=clamp(0.42/r,0.3,0.9);
-        const tx=0.05+((i*0.37)%1)*1.75,tz=1.35+((i*0.61)%1)*0.9;
-        FX.flying.push({m,a:m.position.clone(),b:V3(tx,r*s1*0.9,tz),arc:1.2+Math.random()*0.8,t:0,d:0.7,r0:m.rotation.x,spin:4+Math.random()*4,s1,done:false});
-        W3.pile.push(m);if(W3.pile.length>14){const old=W3.pile.shift();SCN.remove(old)}
+        chainAdd(m);
         W3.cur=null;FX.curKey=null;
       }
       const dir=V3(-1,-0.1,0.4).normalize();
