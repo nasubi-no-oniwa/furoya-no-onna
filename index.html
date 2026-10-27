@@ -650,7 +650,7 @@ function drawGame(dt,t){
       FX.sfxT=0.5+Math.random()*0.4;
       const words=['ムリ…','ムリムリ…','ミチミチ…','むにゅ…','ぬちゃ…','ムリリ…'];
       FX.floats.push({txt:words[(Math.random()*words.length)|0],x:anchor.x+dir.x*30+(Math.random()-0.3)*40,y:anchor.y-18-Math.random()*20,t:0,d:0.9,v:24,size:18+Math.random()*5,col:'#c98a4b',stroke:'#2a1406',rot:(Math.random()-0.5)*0.5});
-      SE.squish();FX.sq+=0.12}}
+      FX.sq+=0.12}}
   }else if(gg&&gg.phase==='pop'){
     front={x:anchor.x+dir.x*4,y:anchor.y+dir.y*4};FX.lastProg=null;
   }
@@ -912,10 +912,10 @@ function handleEvents(){
       FX.floats.push({txt:big?'ぶりゅりゅりゅっ！':'ぶりっ！',x:clamp(anchor.x+30,110,W-110),y:anchor.y+24,t:0,d:0.9,v:18,size:big?34:30,col:'#a8692a',stroke:'#fff3d6',rot:-0.12});
       // 客がすっきり「ふぅ…」
       setTimeout(()=>{if(!g)return;const Ly2=L();FX.floats.push({txt:'ふぅ…',x:Ly2.gx+Ly2.gw*0.12,y:Ly2.gBottom-Ly2.gh*0.95,t:0,d:1.2,v:16,size:20,col:'#e8f5d0',stroke:'#2d4a14',rot:0.08});
-        for(let i=0;i<5;i++)FX.stink.push({x:Ly2.gx-Ly2.gw*0.05+i*6,y:Ly2.gBottom-Ly2.gh*0.62,r:10,vx:20+i*6,a:1.2});SE.sigh()},350);
+        for(let i=0;i<5;i++)FX.stink.push({x:Ly2.gx-Ly2.gw*0.05+i*6,y:Ly2.gBottom-Ly2.gh*0.62,r:10,vx:20+i*6,a:1.2})},350);
       FX.floats.push({txt:'+'+it.size+'cm',sub:iname(it.def),x:clamp(anchor.x-20,90,W-90),y:anchor.y-60,t:0,d:1.2,v:40,size:big?40:32,col:big?'#ffe066':'#fff3d6'});
       FX.shake=big?10:5;FX.flash=big?0.35:0.12;FX.guestWob=1;
-      SE.buri(it.size);SE.pop(it.size);if(big)SE.big();
+      SE.pop(it.size);if(big)SE.big();
       const oks=T().ok;say('ok',oks[(FX.okIx++)%oks.length],0.9);
     }else if(e.k==='next'){SE.next()}
     else if(e.k==='loose'){say('loose',T().loose,1.1);SE.rumble();FX.shake=8;FX.floats.push({txt:T().rumble,x:Ly.anchor.x,y:Ly.anchor.y-40,t:0,d:0.8,v:30,size:22,col:'#cfe3ff',stroke:'#1d2c4a'})}
