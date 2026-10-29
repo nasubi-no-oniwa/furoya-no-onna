@@ -187,7 +187,7 @@ ko:{title:'穴の神隠し',sub:'밀려 나오는 ○△■를 밧줄로 끌어�
  shapes:{box:'네모',ball:'동그라미',cone:'세모'},nogl:'이 기기에서는 3D를 표시할 수 없습니다',
  credit:'그림・소리: 게임 내 자작',muri:['끄응…','끙끙…','미끌…','물컹…','질척…'],buri:'뿡!',buriBig:'뿌르르르륵!',fuu:'후우…'}
 };
-let LANG=lsGet('furo_lang');
+let LANG=(()=>{try{const q=new URLSearchParams(location.search).get('lang');if(q&&TX[q]){lsSet('furo_lang',q);return q}}catch(_){}return lsGet('furo_lang')})(); // ?lang=xx があればその言葉で始める
 if(!TX[LANG]){const n=(navigator.language||'ja').toLowerCase();LANG=n.startsWith('ja')?'ja':n.startsWith('zh')?'zh':n.startsWith('ko')?'ko':n.startsWith('en')?'en':'ja'}
 const T=()=>TX[LANG];
 const RANK_AT=[0,200,500,900,1400,2000,2800,3800,5000,7000];
