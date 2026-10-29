@@ -501,6 +501,9 @@
           "u": {
             ".validate": "newData.isString()"
           },
+          "s": {
+            ".validate": "newData.val() === 80 || newData.val() === 100 || newData.val() === 120"
+          },
           "t": {
             ".validate": "newData.val() === now"
           },
@@ -546,6 +549,34 @@
           },
           "$other": {
             ".validate": false
+          }
+        }
+      },
+      "day": {
+        "$d": {
+          ".read": true,
+          ".indexOn": [
+            "k"
+          ],
+          ".validate": "$d.matches(/^20[0-9]{6}$/)",
+          "$code": {
+            ".write": "auth != null && ((newData.exists() && root.child('mahou/balls/' + $code).exists() && root.child('mahou/balls/' + $code + '/u').val() !== auth.uid && !root.child('mahou/res/' + $code + '/' + auth.uid).exists() && newData.parent().parent().parent().child('res/' + $code + '/' + auth.uid).exists()) || (data.exists() && !newData.exists() && root.child('mahou/balls/' + $code + '/u').val() === auth.uid))",
+            ".validate": "newData.hasChildren(['a', 'h', 'k', 'n']) && newData.child('n').val() === root.child('mahou/balls/' + $code + '/n').val() && ((!data.exists() && newData.child('a').val() === 1 && newData.child('h').val() === newData.parent().parent().parent().child('res/' + $code + '/' + auth.uid + '/h').val()) || (data.exists() && newData.child('a').val() === data.child('a').val() + 1 && newData.child('h').val() === data.child('h').val() + newData.parent().parent().parent().child('res/' + $code + '/' + auth.uid + '/h').val())) && newData.child('k').val() === newData.child('a').val() - newData.child('h').val()",
+            "a": {
+              ".validate": "newData.isNumber()"
+            },
+            "h": {
+              ".validate": "newData.isNumber()"
+            },
+            "k": {
+              ".validate": "newData.isNumber()"
+            },
+            "n": {
+              ".validate": "newData.isString()"
+            },
+            "$other": {
+              ".validate": false
+            }
           }
         }
       },
