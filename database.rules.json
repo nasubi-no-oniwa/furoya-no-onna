@@ -605,6 +605,46 @@
           ".validate": "newData.val() === true"
         }
       }
+    },
+    "konnyaku": {
+      "st": {
+        "$s": {
+          ".read": true,
+          ".indexOn": [
+            "s"
+          ],
+          ".validate": "$s.matches(/^([1-9]|[12][0-9]|30)$/)",
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || (newData.child('s').val() < data.child('s').val() && now - data.child('t').val() > 5000))",
+            ".validate": "newData.hasChildren(['n', 's', 'f', 't', 'v'])",
+            "n": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
+            },
+            "s": {
+              ".validate": "newData.isNumber() && newData.val() >= 2000 && newData.val() <= 36000000"
+            },
+            "f": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9999"
+            },
+            "t": {
+              ".validate": "newData.val() === now"
+            },
+            "v": {
+              ".validate": "newData.isNumber()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      },
+      "hidden": {
+        ".read": true,
+        "$uid": {
+          ".write": "auth != null && auth.uid === root.child('furo_admin/uid').val()",
+          ".validate": "newData.val() === true"
+        }
+      }
     }
   }
 }
