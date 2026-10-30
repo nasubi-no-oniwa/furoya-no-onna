@@ -796,6 +796,129 @@
           ".validate": "newData.val() === true"
         }
       }
+    },
+    "takkyu": {
+      "balls": {
+        ".read": true,
+        "$code": {
+          ".write": "auth != null && ((!data.exists() && newData.exists() && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{8}$/) && newData.parent().parent().child('last/' + auth.uid + '/t').val() === now && (!root.child('takkyu/last/' + auth.uid).exists() || now - root.child('takkyu/last/' + auth.uid + '/t').val() > 15000)) || (data.exists() && !newData.exists() && data.child('u').val() === auth.uid))",
+          ".validate": "newData.hasChildren(['n', 'p', 'u', 't', 'v']) && newData.child('u').val() === auth.uid",
+          "n": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 16"
+          },
+          "p": {
+            ".validate": "newData.isString() && newData.val().length >= 10 && newData.val().length <= 6000"
+          },
+          "u": {
+            ".validate": "newData.isString()"
+          },
+          "s": {
+            ".validate": "newData.isNumber() && newData.val() >= 20 && newData.val() <= 100"
+          },
+          "t": {
+            ".validate": "newData.val() === now"
+          },
+          "v": {
+            ".validate": "newData.isNumber()"
+          },
+          "r": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 5"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "last": {
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid && newData.exists()",
+          ".validate": "newData.hasChildren(['t'])",
+          "t": {
+            ".validate": "newData.val() === now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "cnt": {
+        ".read": true,
+        ".indexOn": [
+          "k"
+        ],
+        "$code": {
+          ".write": "auth != null && ((newData.exists() && root.child('takkyu/balls/' + $code).exists() && root.child('takkyu/balls/' + $code + '/u').val() !== auth.uid && !root.child('takkyu/res/' + $code + '/' + auth.uid).exists() && newData.parent().parent().child('res/' + $code + '/' + auth.uid).exists()) || (data.exists() && !newData.exists() && root.child('takkyu/balls/' + $code + '/u').val() === auth.uid))",
+          ".validate": "newData.hasChildren(['a', 'h', 'k', 'n']) && newData.child('n').val() === root.child('takkyu/balls/' + $code + '/n').val() && ((!data.exists() && newData.child('a').val() === 1 && newData.child('h').val() === newData.parent().parent().child('res/' + $code + '/' + auth.uid + '/h').val()) || (data.exists() && newData.child('a').val() === data.child('a').val() + 1 && newData.child('h').val() === data.child('h').val() + newData.parent().parent().child('res/' + $code + '/' + auth.uid + '/h').val())) && newData.child('k').val() === newData.child('a').val() - newData.child('h').val()",
+          "a": {
+            ".validate": "newData.isNumber()"
+          },
+          "h": {
+            ".validate": "newData.isNumber()"
+          },
+          "k": {
+            ".validate": "newData.isNumber()"
+          },
+          "n": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "day": {
+        "$d": {
+          ".read": true,
+          ".indexOn": [
+            "k"
+          ],
+          ".validate": "$d.matches(/^20[0-9]{6}$/)",
+          "$code": {
+            ".write": "auth != null && ((newData.exists() && root.child('takkyu/balls/' + $code).exists() && root.child('takkyu/balls/' + $code + '/u').val() !== auth.uid && !root.child('takkyu/res/' + $code + '/' + auth.uid).exists() && newData.parent().parent().parent().child('res/' + $code + '/' + auth.uid).exists()) || (data.exists() && !newData.exists() && root.child('takkyu/balls/' + $code + '/u').val() === auth.uid))",
+            ".validate": "newData.hasChildren(['a', 'h', 'k', 'n']) && newData.child('n').val() === root.child('takkyu/balls/' + $code + '/n').val() && ((!data.exists() && newData.child('a').val() === 1 && newData.child('h').val() === newData.parent().parent().parent().child('res/' + $code + '/' + auth.uid + '/h').val()) || (data.exists() && newData.child('a').val() === data.child('a').val() + 1 && newData.child('h').val() === data.child('h').val() + newData.parent().parent().parent().child('res/' + $code + '/' + auth.uid + '/h').val())) && newData.child('k').val() === newData.child('a').val() - newData.child('h').val()",
+            "a": {
+              ".validate": "newData.isNumber()"
+            },
+            "h": {
+              ".validate": "newData.isNumber()"
+            },
+            "k": {
+              ".validate": "newData.isNumber()"
+            },
+            "n": {
+              ".validate": "newData.isString()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      },
+      "res": {
+        "$code": {
+          ".read": true,
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.exists() && root.child('takkyu/balls/' + $code).exists() && root.child('takkyu/balls/' + $code + '/u').val() !== auth.uid",
+            ".validate": "newData.hasChildren(['h', 't'])",
+            "h": {
+              ".validate": "newData.val() === 0 || newData.val() === 1"
+            },
+            "t": {
+              ".validate": "newData.val() === now"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      },
+      "hidden": {
+        ".read": true,
+        "$code": {
+          ".write": "auth != null && auth.uid === root.child('furo_admin/uid').val()",
+          ".validate": "newData.val() === true"
+        }
+      }
     }
   }
 }
