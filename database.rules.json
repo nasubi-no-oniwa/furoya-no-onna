@@ -1124,6 +1124,87 @@
             }
           }
         }
+      },
+      "w": {
+        ".read": true,
+        "$code": {
+          ".write": "auth != null && ((!data.exists() && newData.exists() && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{8}$/) && newData.parent().parent().child('wlast/' + auth.uid + '/t').val() === now && (!root.child('kopamijin/wlast/' + auth.uid).exists() || now - root.child('kopamijin/wlast/' + auth.uid + '/t').val() > 15000)) || (data.exists() && !newData.exists() && data.child('u').val() === auth.uid))",
+          ".validate": "newData.hasChildren(['n', 'd', 'u', 't', 'v']) && newData.child('u').val() === auth.uid",
+          "n": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
+          },
+          "d": {
+            ".validate": "newData.isString() && newData.val().length >= 10 && newData.val().length <= 120000 && newData.val().beginsWith('1|')"
+          },
+          "u": {
+            ".validate": "newData.isString()"
+          },
+          "t": {
+            ".validate": "newData.val() === now"
+          },
+          "v": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "wl": {
+        ".read": true,
+        ".indexOn": [
+          "t"
+        ],
+        "$code": {
+          ".write": "auth != null && ((!data.exists() && newData.exists() && newData.parent().parent().child('w/' + $code + '/u').val() === auth.uid && !root.child('kopamijin/w/' + $code).exists()) || (data.exists() && !newData.exists() && data.child('u').val() === auth.uid))",
+          ".validate": "newData.hasChildren(['n', 'b', 'u', 't']) && newData.child('u').val() === auth.uid && newData.child('n').val() === newData.parent().parent().child('w/' + $code + '/n').val()",
+          "n": {
+            ".validate": "newData.isString()"
+          },
+          "b": {
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 12000"
+          },
+          "p": {
+            ".validate": "newData.isString() && newData.val().length <= 20000 && (newData.val() === '' || newData.val().beginsWith('data:image/jpeg;base64,'))"
+          },
+          "u": {
+            ".validate": "newData.isString()"
+          },
+          "t": {
+            ".validate": "newData.val() === now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "wlast": {
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid && newData.exists()",
+          ".validate": "newData.hasChildren(['t'])",
+          "t": {
+            ".validate": "newData.val() === now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "rp": {
+        ".read": true,
+        "$code": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && (newData.exists() ? root.child('kopamijin/w/' + $code).exists() : true)",
+            ".validate": "newData.val() === true"
+          }
+        }
+      },
+      "hw": {
+        ".read": true,
+        "$code": {
+          ".write": "auth != null && auth.uid === root.child('furo_admin/uid').val()",
+          ".validate": "newData.val() === true"
+        }
       }
     }
   }
