@@ -1246,6 +1246,33 @@
           ".validate": "newData.val() === true"
         }
       }
+    },
+    "tequila": {
+      "scores": {
+        ".read": true,
+        ".indexOn": [
+          "c"
+        ],
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || newData.child('c').val() > data.child('c').val())",
+          ".validate": "newData.hasChildren(['n', 'c', 's', 't'])",
+          "n": {
+            ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
+          },
+          "c": {
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 1000000 && newData.val() <= newData.parent().child('s').val() / 30 + 3"
+          },
+          "s": {
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 100000000"
+          },
+          "t": {
+            ".validate": "newData.val() === now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
     }
   }
 }
