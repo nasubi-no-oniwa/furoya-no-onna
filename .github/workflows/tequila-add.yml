@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - 'tequila-add.json'
+      - '.github/workflows/tequila-add.yml'
   workflow_dispatch:
 permissions:
   contents: write
@@ -34,7 +35,15 @@ jobs:
               if(!(v.c>=1&&v.s>=1&&v.c<=v.s/44+3)) throw new Error("回数と秒が合わない "+k);
             }'
           npx -y firebase-tools@latest database:update /tequila/scores tequila-add.json --project furoya-no-onna --force --non-interactive
-          npx -y firebase-tools@latest database:get /tequila/scores --project furoya-no-onna --order-by '"c"' --limit-to-last 5 -o tequila-add-result.json
+          npx -y firebase-tools@latest database:get /tequila/scores --project furoya-no-onna --order-by '"c"' --limit-to-last 300 -o "$RUNNER_TEMP/all.json"
+          node -e '
+            const fs=require("fs");
+            const all=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/all.json","utf8"))||{};
+            const add=JSON.parse(fs.readFileSync("tequila-add.json","utf8"));
+            const rows=Object.entries(all).sort((a,b)=>b[1].c-a[1].c||a[1].s-b[1].s);
+            const out={added:{},top5:rows.slice(0,5).map(([k,v])=>({k,...v}))};
+            for(const k of Object.keys(add)){const i=rows.findIndex(r=>r[0]===k);out.added[k]=i<0?null:{rank:i+1,...rows[i][1]};}
+            fs.writeFileSync("tequila-add-result.json",JSON.stringify(out,null,1));'
       - name: 鍵を消す
         if: always()
         run: rm -f "$RUNNER_TEMP/sa.json"
