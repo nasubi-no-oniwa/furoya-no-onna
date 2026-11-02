@@ -1222,7 +1222,7 @@
               ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
             },
             "s": {
-              ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 1000000000000000"
+              ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 9000000000000000"
             },
             "k": {
               ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
