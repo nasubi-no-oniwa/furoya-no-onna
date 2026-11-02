@@ -1,0 +1,40 @@
+# ドパがき：途中経過（runs）の様子を見る（調査用・データは変えない）
+name: ドパがき 途中経過を見る
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/tequila-inspect.yml'
+  workflow_dispatch:
+jobs:
+  look:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 鍵を一時ファイルに書く
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+      - name: 見る
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: |
+          npx -y firebase-tools@latest database:get /tequila/runs --project furoya-no-onna -o "$RUNNER_TEMP/runs.json"
+          npx -y firebase-tools@latest database:get /tequila/scores --project furoya-no-onna -o "$RUNNER_TEMP/scores.json"
+          node -e '
+            const fs=require("fs"),T=process.env.RUNNER_TEMP;
+            const runs=JSON.parse(fs.readFileSync(T+"/runs.json","utf8"))||{};
+            const sc=JSON.parse(fs.readFileSync(T+"/scores.json","utf8"))||{};
+            const j=t=>new Date(t+9*3600e3).toISOString().slice(5,19).replace("T"," ");
+            const rows=Object.entries(runs).sort((a,b)=>b[1].c-a[1].c);
+            console.log("途中経過",rows.length,"件（回数の多い順）");
+            for(const [k,v] of rows.slice(0,40)){
+              const real=(v.hb-v.st)/1000;
+              console.log(k.slice(0,8),"回数",v.c,"申告秒",v.s,"実時間",Math.round(real),"開始",j(v.st),"最後の通信",j(v.hb),"ランキング",sc[k]?(sc[k].n+" "+sc[k].c+"回"):"なし");
+            }
+          '
+      - name: 鍵を消す
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
