@@ -1,7 +1,5 @@
-# ドパがきにはできないゲーム：送れなかった記録を手で入れる
-# tequila-add.json に { "キー": { "n": 名前, "c": 回数, "s": 秒, "t": 時刻 } } を書いて GitHub に上げると自動で入る
-# 入れたあと、ランキングの中身を tequila-add-result.json に書き出す（入ったかの確認用）
-name: ドパがき ランキングに手で記録を入れる
+# ドパがき：送れなかった本物の記録を手で入れる（tequila-add.json を上げると動く）
+name: ドパがき 記録を手で入れる
 on:
   push:
     branches: [main]
@@ -9,8 +7,6 @@ on:
       - 'tequila-add.json'
       - '.github/workflows/tequila-add.yml'
   workflow_dispatch:
-permissions:
-  contents: write
 jobs:
   add:
     runs-on: ubuntu-latest
@@ -23,36 +19,14 @@ jobs:
         env:
           SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
-      - name: 記録を入れる
+      - name: 入れる
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
         run: |
-          node -e '
-            const d=JSON.parse(require("fs").readFileSync("tequila-add.json","utf8"));
-            for(const [k,v] of Object.entries(d)){
-              if(!/^[A-Za-z0-9_]{3,40}$/.test(k)) throw new Error("キーの形がちがう "+k);
-              if(typeof v.n!=="string"||!v.n.length||v.n.length>12) throw new Error("名前 "+k);
-              if(!(v.c>=1&&v.s>=1&&v.c<=v.s/44+3)) throw new Error("回数と秒が合わない "+k);
-            }'
-          npx -y firebase-tools@latest database:update /tequila/scores tequila-add.json --project furoya-no-onna --force --non-interactive
-          npx -y firebase-tools@latest database:get /tequila/scores --project furoya-no-onna --order-by '"c"' --limit-to-last 300 -o "$RUNNER_TEMP/all.json"
-          node -e '
-            const fs=require("fs");
-            const all=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/all.json","utf8"))||{};
-            const add=JSON.parse(fs.readFileSync("tequila-add.json","utf8"));
-            const rows=Object.entries(all).sort((a,b)=>b[1].c-a[1].c||a[1].s-b[1].s);
-            const out={added:{},top5:rows.slice(0,5).map(([k,v])=>({k,...v}))};
-            for(const k of Object.keys(add)){const i=rows.findIndex(r=>r[0]===k);out.added[k]=i<0?null:{rank:i+1,...rows[i][1]};}
-            fs.writeFileSync("tequila-add-result.json",JSON.stringify(out,null,1));'
+          node -e 'const d=require("./tequila-add.json");for(const [k,v] of Object.entries(d)){if(!/^[A-Za-z0-9]{8,40}$/.test(k))throw k;require("fs").writeFileSync(process.env.RUNNER_TEMP+"/"+k+".json",JSON.stringify(v));console.log(k)}' > "$RUNNER_TEMP/keys.txt"
+          while read -r k; do
+            npx -y firebase-tools@latest database:set "/tequila/scores/$k" "$RUNNER_TEMP/$k.json" --project furoya-no-onna --force --non-interactive
+          done < "$RUNNER_TEMP/keys.txt"
       - name: 鍵を消す
         if: always()
         run: rm -f "$RUNNER_TEMP/sa.json"
-      - name: 確認用のファイルを上げる
-        run: |
-          git config user.name "add-bot"
-          git config user.email "add-bot@users.noreply.github.com"
-          git add tequila-add-result.json
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "手で入れた記録の確認"
-          git pull --rebase --autostash || true
-          git push
