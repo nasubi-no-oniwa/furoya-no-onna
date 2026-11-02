@@ -1254,19 +1254,41 @@
           "c"
         ],
         "$uid": {
-          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || newData.child('c').val() > data.child('c').val())",
+          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || newData.child('c').val() > data.child('c').val()) && root.child('tequila/runs/'+$uid).exists() && newData.child('c').val() <= root.child('tequila/runs/'+$uid).child('c').val() && newData.child('s').val() <= root.child('tequila/runs/'+$uid).child('s').val() && now - root.child('tequila/runs/'+$uid).child('hb').val() <= 600000",
           ".validate": "newData.hasChildren(['n', 'c', 's', 't'])",
           "n": {
             ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
           },
           "c": {
-            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 1000000 && newData.val() <= newData.parent().child('s').val() / 30 + 3"
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 1000000 && newData.val() <= newData.parent().child('s').val() / 44 + 3"
           },
           "s": {
             ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 100000000"
           },
           "t": {
             ".validate": "newData.val() === now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "runs": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "auth != null && auth.uid === $uid && newData.exists()",
+          ".validate": "newData.hasChildren(['st', 'hb', 'c', 's']) && newData.child('hb').val() === now && ((newData.child('st').val() === now && newData.child('c').val() === 0 && newData.child('s').val() === 0) || (data.exists() && newData.child('st').val() === data.child('st').val() && now - data.child('hb').val() <= 600000 && newData.child('s').val() >= data.child('s').val() && newData.child('s').val() <= data.child('s').val() + (now - data.child('hb').val()) / 1000 + 3 && newData.child('c').val() >= data.child('c').val() && newData.child('c').val() <= data.child('c').val() + (now - data.child('hb').val()) / 44000 + 2))",
+          "st": {
+            ".validate": "newData.isNumber()"
+          },
+          "hb": {
+            ".validate": "newData.isNumber()"
+          },
+          "c": {
+            ".validate": "newData.isNumber()"
+          },
+          "s": {
+            ".validate": "newData.isNumber()"
           },
           "$other": {
             ".validate": false

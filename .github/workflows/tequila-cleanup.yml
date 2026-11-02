@@ -1,0 +1,46 @@
+# ドパがきにはできないゲーム：ランキングの不正な記録を消す
+# このファイルか tequila-remove.txt を GitHub に上げると自動で動く（手動でも動かせる）
+name: ドパがき ランキングの掃除
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tequila-remove.txt'
+      - '.github/workflows/tequila-cleanup.yml'
+  workflow_dispatch:
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 鍵を一時ファイルに書く
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+      - name: 不正な記録を消す
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: |
+          npx -y firebase-tools@latest database:get /tequila/scores --project furoya-no-onna -o "$RUNNER_TEMP/scores.json"
+          node -e '
+            const fs=require("fs");
+            const d=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/scores.json","utf8"))||{};
+            const ban=new Set(fs.readFileSync("tequila-remove.txt","utf8").split(/\s+/).filter(x=>/^[A-Za-z0-9]{20,40}$/.test(x)));
+            const out=[];
+            for(const [k,v] of Object.entries(d)){
+              const c=+v.c||0,s=+v.s||0;
+              // 名前 probe（遊ばずに直接入れた試し書き）／手で指定したID／1回44秒より速い（ありえない）
+              if(ban.has(k)||String(v.n).trim().toLowerCase()==="probe"||c>s/44+3){out.push(k);console.log("消す:",k,v.n,c+"回",s+"秒");}
+            }
+            fs.writeFileSync(process.env.RUNNER_TEMP+"/rm.txt",out.join("\n"));
+            console.log("合計",out.length,"件");
+          '
+          while read -r k; do
+            [ -n "$k" ] && npx -y firebase-tools@latest database:remove "/tequila/scores/$k" --project furoya-no-onna --force --non-interactive
+          done < "$RUNNER_TEMP/rm.txt"
+      - name: 鍵を消す
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
