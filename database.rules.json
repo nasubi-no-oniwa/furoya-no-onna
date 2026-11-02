@@ -1254,7 +1254,7 @@
           "c"
         ],
         "$uid": {
-          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || newData.child('c').val() > data.child('c').val()) && ((root.child('tequila/runs/'+$uid).exists() && newData.child('c').val() <= root.child('tequila/runs/'+$uid).child('c').val() && newData.child('s').val() <= root.child('tequila/runs/'+$uid).child('s').val() && now - root.child('tequila/runs/'+$uid).child('hb').val() <= 600000) || (now < 1793653200000 && now - newData.child('s').val() * 1000 <= 1793619000000))",
+          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || newData.child('c').val() > data.child('c').val()) && ((root.child('tequila/runs/'+$uid).exists() && newData.child('c').val() <= root.child('tequila/runs/'+$uid).child('c').val() && newData.child('s').val() <= root.child('tequila/runs/'+$uid).child('s').val() && now - root.child('tequila/runs/'+$uid).child('hb').val() <= 3600000) || (now < 1793653200000 && now - newData.child('s').val() * 1000 <= 1793619000000))",
           ".validate": "newData.hasChildren(['n', 'c', 's', 't'])",
           "n": {
             ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
@@ -1277,7 +1277,7 @@
         "$uid": {
           ".read": "auth != null && auth.uid === $uid",
           ".write": "auth != null && auth.uid === $uid && newData.exists()",
-          ".validate": "newData.hasChildren(['st', 'hb', 'c', 's']) && newData.child('hb').val() === now && newData.child('s').val() <= (now - newData.child('st').val()) / 1000 + 3 && newData.child('c').val() <= newData.child('s').val() / 44 + 3 && ((newData.child('st').val() === now && newData.child('c').val() === 0 && newData.child('s').val() === 0) || (data.exists() && newData.child('st').val() === data.child('st').val() && now - data.child('hb').val() <= 600000 && newData.child('s').val() >= data.child('s').val() && newData.child('c').val() >= data.child('c').val()))",
+          ".validate": "newData.hasChildren(['st', 'hb', 'c', 's']) && newData.child('hb').val() === now && newData.child('s').val() <= (now - newData.child('st').val()) / 1000 + 3 && newData.child('c').val() <= newData.child('s').val() / 44 + 3 && ((newData.child('st').val() === now && newData.child('c').val() === 0 && newData.child('s').val() === 0) || (data.exists() && newData.child('st').val() === data.child('st').val() && now - data.child('hb').val() <= 3600000 && newData.child('s').val() >= data.child('s').val() && newData.child('c').val() >= data.child('c').val()))",
           "st": {
             ".validate": "newData.isNumber()"
           },
