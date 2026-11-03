@@ -31,12 +31,12 @@ jobs:
             const rows=Object.entries(runs);
             console.log("途中経過",rows.length,"件");
             const show=([k,v])=>console.log("候補",k.slice(0,8),"回数",v.c,"申告秒",v.s,"実時間",Math.round((v.hb-v.st)/1000),"開始",j(v.st),"最後の通信",j(v.hb),"ランキング",sc[k]?(sc[k].n+" "+sc[k].c+"回 "+sc[k].s+"秒"):"なし");
-            // モリーノさん：250回・11226秒・22:50ごろ終了
-            rows.filter(([k,v])=>(v.c>=200&&v.c<=255)||(v.s>=10500&&v.s<=11400)).forEach(show);
+            // さしすばさん：973回・43034秒（11:57:14）・11/3 8時ごろ終了
+            rows.filter(([k,v])=>(v.c>=850&&v.c<=1000)||(v.s>=38000&&v.s<=44000)).forEach(show);
             const ng1=rows.filter(([k,v])=>v.s>(v.hb-v.st)/1000+3).length;
             const ng2=rows.filter(([k,v])=>v.c>v.s/44+3).length;
             console.log("集計 申告秒が実時間を超えた:",ng1,"回数が多すぎ:",ng2);
-            for(const [k,v] of Object.entries(sc))if(v.n&&String(v.n).includes("モリ"))console.log("ランキングに",k.slice(0,8),v.n,v.c,v.s);
+            for(const [k,v] of Object.entries(sc))if(v.n&&String(v.n).includes("さしすば"))console.log("ランキングに",k.slice(0,8),v.n,v.c,v.s);
           '
       - name: 鍵を消す
         if: always()
