@@ -1,0 +1,60 @@
+# ドパがきにしかできないゲーム：ランキングの記録を、ゲームと同じ計算でもう一度確かめる
+# 合わない記録・dpc-remove.txt に書いたIDの記録を消す（10分ごとに自動で動く。手動でも動かせる）
+name: ドパがきにしか 記録の確認
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'dpc-remove.txt'
+      - '.github/workflows/dpc-check.yml'
+  workflow_dispatch:
+concurrency:
+  group: dpc-check
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 鍵を一時ファイルに書く
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+      - name: 確かめて、合わない記録を消す
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/nasubi-no-oniwa/dopagaki-catch/main/physics.js" -o "$RUNNER_TEMP/physics.js"
+          touch dpc-remove.txt
+          for b in sp pc; do
+            npx -y firebase-tools@latest database:get /dpc/$b/scores --project furoya-no-onna -o "$RUNNER_TEMP/$b.json"
+          done
+          node -e '
+            const fs=require("fs"),T=process.env.RUNNER_TEMP;
+            const DPC=require(T+"/physics.js");
+            const ban=new Set(fs.readFileSync("dpc-remove.txt","utf8").split(/\s+/).filter(x=>/^[A-Za-z0-9]{20,40}$/.test(x)));
+            const out=[];let n=0;
+            for(const b of ["sp","pc"]){
+              let d={};try{d=JSON.parse(fs.readFileSync(T+"/"+b+".json","utf8"))||{}}catch(e){}
+              for(const [k,v] of Object.entries(d)){n++;
+                let why="";
+                if(ban.has(k))why="手で指定";
+                else if(!DPC.check(v))why="計算が合わない";
+                else if(String(v.n).trim().toLowerCase()==="probe")why="試し書き";
+                if(why){out.push(b+" "+k);console.log("消す:",b,k,JSON.stringify(v.n),v.q,v.k,why);}
+              }
+            }
+            fs.writeFileSync(T+"/rm.txt",out.join("\n"));
+            console.log("確かめた",n,"件 / 消す",out.length,"件");
+          '
+          while read -r b k; do
+            [ -n "$k" ] && npx -y firebase-tools@latest database:remove "/dpc/$b/scores/$k" --project furoya-no-onna --force --non-interactive
+          done < "$RUNNER_TEMP/rm.txt"
+      - name: 鍵を消す
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
