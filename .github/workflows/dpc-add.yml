@@ -1,0 +1,45 @@
+# ドパがきにしか：記録を手で入れる（dpc-add.json を上げると動く）
+# 入れる前に、ゲームと同じ計算でつじつまが合うか確かめる（合わないものは入れない）
+name: ドパがきにしか 記録を手で入れる
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dpc-add.json'
+      - '.github/workflows/dpc-add.yml'
+  workflow_dispatch:
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 鍵を一時ファイルに書く
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+      - name: 入れる
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/nasubi-no-oniwa/dopagaki-catch/main/physics.js" -o "$RUNNER_TEMP/physics.js"
+          node -e '
+            const fs=require("fs"),T=process.env.RUNNER_TEMP,DPC=require(T+"/physics.js");
+            const d=require("./dpc-add.json");if(!/^(sp|pc)$/.test(d.board))throw "board";
+            const now=Date.now();let out="";
+            for(const [k,v] of Object.entries(d.records)){
+              if(!/^[A-Za-z0-9]{8,40}$/.test(k))throw k;
+              if(!DPC.check(v))throw "計算が合わない: "+k;
+              const rec={...v,st:now-4000,t:now};
+              fs.writeFileSync(T+"/"+k+".json",JSON.stringify(rec));out+=d.board+" "+k+"\n";console.log("入れる",d.board,k,v.n,v.q,v.k);
+            }
+            fs.writeFileSync(T+"/keys.txt",out);
+          '
+          while read -r b k; do
+            [ -n "$k" ] && npx -y firebase-tools@latest database:set "/dpc/$b/scores/$k" "$RUNNER_TEMP/$k.json" --project furoya-no-onna --force --non-interactive
+          done < "$RUNNER_TEMP/keys.txt"
+      - name: 鍵を消す
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"
