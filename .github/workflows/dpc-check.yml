@@ -1,5 +1,5 @@
 # ドパがきにしかできないゲーム：ランキングの記録を、ゲームと同じ計算でもう一度確かめる
-# 合わない記録・0.02秒より速いのに50投目より前の記録・dpc-remove.txt に書いたIDの記録を消す（10分ごとに自動で動く。手動でも動かせる）
+# 合わない記録・dpc-remove.txt に書いたIDの記録を消す（10分ごとに自動で動く。手動でも動かせる）
 name: ドパがきにしか 記録の確認
 on:
   schedule:
@@ -46,7 +46,6 @@ jobs:
                 if(ban.has(k))why="手で指定";
                 else if(!DPC.check(v))why="計算が合わない";
                 else if(String(v.n).trim().toLowerCase()==="probe")why="試し書き";
-                else if(v.q<2000&&!(v.c>=50))why="0.02秒より速いのに50投目より前";
                 if(why){out.push(b+" "+k);console.log("消す:",b,k,JSON.stringify(v.n),v.q,v.k,why);}
               }
             }
