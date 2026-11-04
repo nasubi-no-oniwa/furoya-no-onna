@@ -1300,7 +1300,7 @@
       "throws": {
         "$uid": {
           ".read": "auth != null && auth.uid === $uid",
-          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || now - data.child('t').val() >= 1000) && ((newData.hasChild('c') && newData.child('c').val() === (data.child('c').exists() ? data.child('c').val() + 1 : 1)) || (!newData.hasChild('c') && now < 1793772000000))",
+          ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || now - data.child('t').val() >= 1000) && newData.hasChild('c') && newData.child('c').val() === (data.child('c').exists() ? data.child('c').val() + 1 : 1)",
           ".validate": "newData.hasChildren(['t'])",
           "t": {
             ".validate": "newData.val() === now"
@@ -1320,7 +1320,7 @@
             "q"
           ],
           "$uid": {
-            ".write": "auth != null && auth.uid === $uid && newData.exists() && newData.child('st').val() === root.child('dpc/throws/'+$uid+'/t').val() && (!data.exists() || newData.child('st').val() > data.child('st').val()) && (!data.exists() || newData.child('q').val() < data.child('q').val() || (newData.child('q').val() === data.child('q').val() && newData.child('k').val() > data.child('k').val())) && now - newData.child('st').val() <= 600000 && now >= newData.child('st').val() + newData.child('eu').val() / 1000 && ((newData.hasChild('c') && newData.child('c').val() === root.child('dpc/throws/'+$uid+'/c').val()) || (!newData.hasChild('c') && now < 1793772000000))",
+            ".write": "auth != null && auth.uid === $uid && newData.exists() && newData.child('st').val() === root.child('dpc/throws/'+$uid+'/t').val() && (!data.exists() || newData.child('st').val() > data.child('st').val()) && (!data.exists() || newData.child('q').val() < data.child('q').val() || (newData.child('q').val() === data.child('q').val() && newData.child('k').val() > data.child('k').val())) && now - newData.child('st').val() <= 600000 && now >= newData.child('st').val() + newData.child('eu').val() / 1000 && newData.hasChild('c') && newData.child('c').val() === root.child('dpc/throws/'+$uid+'/c').val()",
             ".validate": "newData.hasChildren(['n','q','k','a','p','eu','x','y','st','t','v']) && ((newData.child('a').val() === 1 && newData.child('q').val() >= 1000 && newData.child('q').val() <= 50000 && newData.child('eu').val() <= 600000 && newData.child('q').val() - newData.child('eu').val() / 10 <= 4000 && newData.child('eu').val() / 10 - newData.child('q').val() <= 4000 && newData.child('y').val() >= 26000) || (newData.child('a').val() === 0 && newData.child('q').val() >= 145000 && newData.child('q').val() <= 600000 && newData.child('q').val() - newData.child('eu').val() / 10 <= 600 && newData.child('eu').val() / 10 - newData.child('q').val() <= 600 && newData.child('x').val() === 0 && newData.child('y').val() === 0))",
             "n": {
               ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
@@ -1371,7 +1371,7 @@
             "q"
           ],
           "$uid": {
-            ".write": "auth != null && auth.uid === $uid && newData.exists() && newData.child('st').val() === root.child('dpc/throws/'+$uid+'/t').val() && (!data.exists() || newData.child('st').val() > data.child('st').val()) && (!data.exists() || newData.child('q').val() < data.child('q').val() || (newData.child('q').val() === data.child('q').val() && newData.child('k').val() > data.child('k').val())) && now - newData.child('st').val() <= 600000 && now >= newData.child('st').val() + newData.child('eu').val() / 1000 && ((newData.hasChild('c') && newData.child('c').val() === root.child('dpc/throws/'+$uid+'/c').val()) || (!newData.hasChild('c') && now < 1793772000000))",
+            ".write": "auth != null && auth.uid === $uid && newData.exists() && newData.child('st').val() === root.child('dpc/throws/'+$uid+'/t').val() && (!data.exists() || newData.child('st').val() > data.child('st').val()) && (!data.exists() || newData.child('q').val() < data.child('q').val() || (newData.child('q').val() === data.child('q').val() && newData.child('k').val() > data.child('k').val())) && now - newData.child('st').val() <= 600000 && now >= newData.child('st').val() + newData.child('eu').val() / 1000 && newData.hasChild('c') && newData.child('c').val() === root.child('dpc/throws/'+$uid+'/c').val()",
             ".validate": "newData.hasChildren(['n','q','k','a','p','eu','x','y','st','t','v']) && ((newData.child('a').val() === 1 && newData.child('q').val() >= 1000 && newData.child('q').val() <= 50000 && newData.child('eu').val() <= 600000 && newData.child('q').val() - newData.child('eu').val() / 10 <= 4000 && newData.child('eu').val() / 10 - newData.child('q').val() <= 4000 && newData.child('y').val() >= 26000) || (newData.child('a').val() === 0 && newData.child('q').val() >= 145000 && newData.child('q').val() <= 600000 && newData.child('q').val() - newData.child('eu').val() / 10 <= 600 && newData.child('eu').val() / 10 - newData.child('q').val() <= 600 && newData.child('x').val() === 0 && newData.child('y').val() === 0))",
             "n": {
               ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
