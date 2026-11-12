@@ -118,6 +118,13 @@ var was={};setInterval(function(){try{var any=false;for(var i=0;i<IDS.length;i++
 <script src="titles.js"></script>
 <script>
 'use strict';
+
+// Xの投稿で引用するツイート（なすびのお庭の管理ページ quote/ で日本語・英語を貼りかえられる）
+var NQ=window.__nq||(window.__nq={q:{}});if(!NQ.f){NQ.f=1;fetch('https://ft-red-default-rtdb.asia-southeast1.firebasedatabase.app/xquote/g/furoya-no-onna.json').then(r=>r.json()).then(d=>{if(d&&typeof d==='object')NQ.q=d;}).catch(()=>{});}
+function quoteURL(){let l='';try{if(typeof lang==='string')l=lang;}catch(e){}if(!l)l=document.documentElement.lang||'ja';const u=(l.slice(0,2)==='ja'?NQ.q.ja:NQ.q.en)||'';return /^https:\/\/x\.com\/[A-Za-z0-9_]{1,15}\/status\/\d{5,25}$/.test(u)?u:'';}
+function xIntent(text,url){const q=quoteURL();return 'https://x.com/intent/post?text='+encodeURIComponent(q?text+'\n'+url:text)+'&url='+encodeURIComponent(q||url);}
+function xIntentT(text){const q=quoteURL();return 'https://x.com/intent/post?text='+encodeURIComponent(text)+(q?'&url='+encodeURIComponent(q):'');}
+function nqS(o){const q=quoteURL();if(!q||!o)return o;o=Object.assign({},o);o.text=(o.text||'')+(o.url?'\n'+o.url:'')+'\n'+q;delete o.url;return o;}
 // ============================================================
 //  穴の神隠し  —  nasubi-no-oniwa
 // ============================================================
@@ -1100,7 +1107,7 @@ function showResult(){
   {const b=document.getElementById('rewatch');if(b)b.onclick=()=>{const L=LASTPLAY;initAudio();resetFX();g=newGame(L.seed);g.replay={ev:decRec(L.r),i:0,own:true};mode='play';acc=0;ov.className='hide';bgmStart();
     document.getElementById('rpbar').hidden=false;document.getElementById('rpname').textContent=tx.rpNow+tx.rewatchMe;document.getElementById('rpstop').textContent=tx.rpStop}}
   document.getElementById('shimg').onclick=()=>shareImage(tx.shareTxt(n,s.toLocaleString('en-US'),rk.replace(/^★/,'')),rk,s,n);
-  document.getElementById('sh').onclick=()=>{window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(tx.shareTxt(n,s.toLocaleString('en-US'),rk.replace(/^★/,'')))+'&url='+encodeURIComponent('https://nasubi-no-oniwa.github.io/furoya-no-onna/'),'_blank','noopener')};
+  document.getElementById('sh').onclick=()=>{window.open(xIntent(tx.shareTxt(n,s.toLocaleString('en-US'),rk.replace(/^★/,'')),'https://nasubi-no-oniwa.github.io/furoya-no-onna/'),'_blank','noopener')};
   const gg=g;
   (async()=>{if(!NET_OK||s<=0)return;try{await loadRanking()}catch(_){}
     if(g!==gg||!canEnter(s))return;const box=document.getElementById('entry');if(!box)return;
@@ -1135,7 +1142,7 @@ async function shareImage(text,title,score,n){
   x.font='900 28px "Zen Maru Gothic", sans-serif';x.fillStyle='#d9bfa0';x.fillText('nasubi-no-oniwa.github.io/furoya-no-onna　#穴の神隠し',W/2,1300);
   const blob=await new Promise(r=>c.toBlob(r,'image/png'));
   const file=new File([blob],'ana-no-kamikakushi.png',{type:'image/png'});
-  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text});return}}catch(e){if(e&&e.name==='AbortError')return}
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share(nqS({files:[file],text}));return}}catch(e){if(e&&e.name==='AbortError')return}
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ana-no-kamikakushi.png';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);
 }
 // 失敗までの力のグラフ（最後の5秒）
